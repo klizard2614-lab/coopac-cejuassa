@@ -1,23 +1,43 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
+import {
+  LayoutDashboard,
+  Users,
+  CreditCard,
+  Receipt,
+  PiggyBank,
+  TrendingDown,
+  Building2,
+  Archive,
+  AlertTriangle,
+  BarChart2,
+  UserCog,
+  Settings,
+  LogOut,
+} from 'lucide-react'
 
 const navItems = [
-  { label: 'Dashboard', href: '/dashboard', icon: '▦' },
-  { label: 'Socios', href: '/dashboard/socios', icon: '👥' },
-  { label: 'Créditos', href: '/dashboard/creditos', icon: '💳' },
-  { label: 'Pagos', href: '/dashboard/pagos', icon: '💰' },
-  { label: 'Aportes', href: '/dashboard/aportes', icon: '📥' },
-  { label: 'Cartera', href: '/dashboard/cartera', icon: '📂' },
-  { label: 'Reportes', href: '/dashboard/reportes', icon: '📊' },
-  { label: 'Configuración', href: '/dashboard/configuracion', icon: '⚙️' },
+  { label: 'Dashboard',     href: '/dashboard',                   Icon: LayoutDashboard },
+  { label: 'Socios',        href: '/dashboard/socios',            Icon: Users },
+  { label: 'Créditos',      href: '/dashboard/creditos',          Icon: CreditCard },
+  { label: 'Pagos',         href: '/dashboard/pagos',             Icon: Receipt },
+  { label: 'Aportes',       href: '/dashboard/aportes',           Icon: PiggyBank },
+  { label: 'Egresos',       href: '/dashboard/egresos',           Icon: TrendingDown },
+  { label: 'Convenios',     href: '/dashboard/convenios',         Icon: Building2 },
+  { label: 'Cartera',       href: '/dashboard/cartera',           Icon: Archive },
+  { label: 'Mora',          href: '/dashboard/mora',              Icon: AlertTriangle },
+  { label: 'Reportes',      href: '/dashboard/reportes',          Icon: BarChart2 },
+  { label: 'Usuarios',      href: '/dashboard/usuarios',          Icon: UserCog },
+  { label: 'Configuración', href: '/dashboard/configuracion',     Icon: Settings },
 ]
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
-  const router = useRouter()
+  const router   = useRouter()
 
   async function handleSignOut() {
     const supabase = createClient()
@@ -26,52 +46,68 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }
 
   return (
-    <div className="flex min-h-screen">
-      <aside
-        className="w-64 flex-shrink-0 flex flex-col"
-        style={{ backgroundColor: '#1e3a5f' }}
-      >
-        <div className="px-6 py-6 border-b border-white/10">
-          <span className="text-white font-bold text-base leading-tight">
-            COOPAC CEJUASSA
-          </span>
+    <div className="flex min-h-screen bg-[#F8FAFC]">
+      {/* ── Sidebar ── */}
+      <aside className="w-64 flex-shrink-0 flex flex-col" style={{ backgroundColor: '#1E3A5F' }}>
+
+        {/* Logo + nombre */}
+        <div className="px-5 py-5 border-b border-white/10">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-lg overflow-hidden flex-shrink-0 bg-white/10 flex items-center justify-center">
+              <Image
+                src="/logo-cejuassa.png"
+                alt="Logo COOPAC CEJUASSA"
+                width={36}
+                height={36}
+                className="w-full h-full object-contain"
+              />
+            </div>
+            <div className="leading-tight">
+              <p className="text-white font-bold text-sm tracking-wide">COOPAC</p>
+              <p className="text-white/70 font-medium text-xs tracking-wider">CEJUASSA</p>
+            </div>
+          </div>
         </div>
 
-        <nav className="flex-1 px-3 py-4 space-y-1">
-          {navItems.map((item) => {
+        {/* Navegación */}
+        <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
+          {navItems.map(({ label, href, Icon }) => {
             const isActive =
-              item.href === '/dashboard'
+              href === '/dashboard'
                 ? pathname === '/dashboard'
-                : pathname.startsWith(item.href)
+                : pathname.startsWith(href)
             return (
               <Link
-                key={item.href}
-                href={item.href}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                key={href}
+                href={href}
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
                   isActive
-                    ? 'bg-white/20 text-white'
-                    : 'text-white/70 hover:bg-white/10 hover:text-white'
+                    ? 'text-white shadow-sm'
+                    : 'text-white/65 hover:text-white hover:bg-white/8'
                 }`}
+                style={isActive ? { backgroundColor: '#1A56DB' } : undefined}
               >
-                <span className="text-base">{item.icon}</span>
-                {item.label}
+                <Icon size={17} strokeWidth={isActive ? 2.2 : 1.8} />
+                {label}
               </Link>
             )
           })}
         </nav>
 
+        {/* Cerrar sesión */}
         <div className="px-3 py-4 border-t border-white/10">
           <button
             onClick={handleSignOut}
-            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-white/70 hover:bg-white/10 hover:text-white transition-colors"
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-white/60 hover:text-white hover:bg-white/8 transition-all"
           >
-            <span className="text-base">🚪</span>
+            <LogOut size={17} strokeWidth={1.8} />
             Cerrar sesión
           </button>
         </div>
       </aside>
 
-      <main className="flex-1 bg-gray-50 overflow-auto">
+      {/* ── Contenido ── */}
+      <main className="flex-1 overflow-auto bg-[#F8FAFC]">
         {children}
       </main>
     </div>
