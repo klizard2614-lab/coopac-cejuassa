@@ -70,25 +70,6 @@ export default function ReportesPage() {
           </div>
         ))}
       </div>
-
-      {/* ── Archivado / fuera de alcance actual ── */}
-      <div className="mt-10">
-        <div className="flex items-center gap-3 mb-4">
-          <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wider">Archivado / fuera de alcance actual</h2>
-          <div className="flex-1 h-px bg-slate-200" />
-        </div>
-        <div className="max-w-md">
-          <div className="bg-slate-50 rounded-xl border border-slate-200 p-5 flex flex-col gap-2 opacity-60">
-            <div>
-              <h3 className="text-base font-semibold text-slate-500">BDCC SBS</h3>
-              <p className="text-sm text-slate-400 mt-0.5">Base de Datos de Cartera Crediticia</p>
-              <p className="text-xs text-slate-400 mt-2">
-                Fuera del alcance actual. La cooperativa confirmó que el único reporte regulatorio activo es Anexo N°6.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
     </PageFrame>
   )
 }
