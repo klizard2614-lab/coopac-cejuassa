@@ -24,7 +24,18 @@ type Socio = {
   beneficiario_nombre: string | null
   beneficiario_dni: string | null
   beneficiario_parentesco: string | null
+  genero: string | null
+  estado_civil: string | null
   convenios: { nombre: string } | null
+}
+
+const GENERO_LABEL: Record<string, string> = { M: 'M — Masculino', F: 'F — Femenino' }
+const ESTADO_CIVIL_LABEL: Record<string, string> = {
+  soltero: 'Soltero/a',
+  casado: 'Casado/a',
+  conviviente: 'Conviviente',
+  divorciado: 'Divorciado/a',
+  viudo: 'Viudo/a',
 }
 
 function SocioEstadoBadge({ estado }: { estado: string }) {
@@ -99,6 +110,8 @@ export default function SocioDetailPage() {
           <FieldItem label="Fecha de Nacimiento" value={formatDate(socio.fecha_nacimiento)} />
           <FieldItem label="Teléfono" value={socio.telefono} />
           <FieldItem label="Email" value={socio.email} />
+          <FieldItem label="Género" value={socio.genero ? GENERO_LABEL[socio.genero] ?? socio.genero : null} />
+          <FieldItem label="Estado Civil" value={socio.estado_civil ? ESTADO_CIVIL_LABEL[socio.estado_civil] ?? socio.estado_civil : null} />
           <FieldItem label="Dirección" value={socio.direccion} span />
         </FieldGrid>
       </DetailSection>

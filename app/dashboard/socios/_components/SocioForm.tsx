@@ -106,6 +106,7 @@ export default function SocioForm({ initialData, socioId, mode, cancelHref, redi
     setError(null)
 
     if (!form.nro_socio.trim()) { setError('El Nº Socio es obligatorio.'); return }
+    if (!form.fecha_ingreso.trim()) { setError('La Fecha de Ingreso es obligatoria.'); return }
     if (!form.apellidos.trim()) { setError('Los apellidos son obligatorios.'); return }
     if (!form.nombres.trim()) { setError('Los nombres son obligatorios.'); return }
     const dniTrim = form.dni.trim()
@@ -247,8 +248,8 @@ export default function SocioForm({ initialData, socioId, mode, cancelHref, redi
                 ))}
               </select>
             </Field>
-            <Field label="Fecha de Ingreso">
-              <input type="date" name="fecha_ingreso" value={form.fecha_ingreso} onChange={set} className={inputCls} />
+            <Field label="Fecha de Ingreso" required>
+              <input type="date" name="fecha_ingreso" value={form.fecha_ingreso} onChange={set} required className={inputCls} />
             </Field>
             <Field label="Estado">
               <select name="estado" value={form.estado} onChange={set} className={selectCls}>
