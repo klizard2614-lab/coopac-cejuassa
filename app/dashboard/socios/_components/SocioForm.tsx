@@ -3,10 +3,21 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { Plus, Trash2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase'
 import { FormPanel, FormSection, ActionStrip, InlineAlert, btnPrimary, btnGhost, inputCls as uiInputCls, selectCls as uiSelectCls } from '../../_components/ui'
 
 type Convenio = { id: number; nombre: string }
+
+type BeneficiarioDraft = {
+  nombres: string
+  dni: string
+  parentesco: string
+  porcentaje: string
+  es_principal: boolean
+}
+
+const EMPTY_BENEFICIARIO: BeneficiarioDraft = { nombres: '', dni: '', parentesco: '', porcentaje: '', es_principal: false }
 
 export type SocioFormData = {
   nro_socio: string
@@ -62,6 +73,7 @@ export default function SocioForm({ initialData, socioId, mode, cancelHref, redi
   const router = useRouter()
   const [form, setForm] = useState<SocioFormData>({ ...EMPTY, ...initialData })
   const [convenios, setConvenios] = useState<Convenio[]>([])
+  const [beneficiarios, setBeneficiarios] = useState<BeneficiarioDraft[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -77,6 +89,18 @@ export default function SocioForm({ initialData, socioId, mode, cancelHref, redi
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }))
   }
 
+  function addBeneficiario() {
+    setBeneficiarios(prev => [...prev, { ...EMPTY_BENEFICIARIO }])
+  }
+
+  function updateBeneficiario(index: number, field: keyof BeneficiarioDraft, value: string | boolean) {
+    setBeneficiarios(prev => prev.map((b, i) => i === index ? { ...b, [field]: value } : b))
+  }
+
+  function removeBeneficiario(index: number) {
+    setBeneficiarios(prev => prev.filter((_, i) => i !== index))
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError(null)
@@ -87,6 +111,21 @@ export default function SocioForm({ initialData, socioId, mode, cancelHref, redi
     const dniTrim = form.dni.trim()
     if (!dniTrim) { setError('El DNI es obligatorio.'); return }
     if (!/^\d{7,8}$/.test(dniTrim)) { setError('El DNI debe tener 7 u 8 dígitos numéricos.'); return }
+
+    const beneficiariosValidos = beneficiarios.filter(b => b.nombres.trim())
+    for (const b of beneficiariosValidos) {
+      if (b.dni.trim() && !/^\d{7,8}$/.test(b.dni.trim())) {
+        setError(`El DNI del beneficiario "${b.nombres}" debe tener 7 u 8 dígitos numéricos.`)
+        return
+      }
+      if (b.porcentaje.trim()) {
+        const pct = parseFloat(b.porcentaje)
+        if (isNaN(pct) || pct < 0 || pct > 100) {
+          setError(`El porcentaje del beneficiario "${b.nombres}" debe estar entre 0 y 100.`)
+          return
+        }
+      }
+    }
 
     setLoading(true)
 
@@ -110,14 +149,36 @@ export default function SocioForm({ initialData, socioId, mode, cancelHref, redi
       estado_civil: form.estado_civil || null,
     }
 
-    const { error: err } = mode === 'create'
-      ? await supabase.from('socios').insert(payload)
-      : await supabase.from('socios').update(payload).eq('id', socioId!)
-
-    if (err) {
-      setError(err.message)
-      setLoading(false)
-      return
+    if (mode === 'create') {
+      const { data, error: err } = await supabase.from('socios').insert(payload).select('id').single()
+      if (err) {
+        setError(err.message)
+        setLoading(false)
+        return
+      }
+      if (beneficiariosValidos.length > 0) {
+        const rows = beneficiariosValidos.map(b => ({
+          socio_id: data!.id,
+          nombres: b.nombres.trim(),
+          dni: b.dni.trim() || null,
+          parentesco: b.parentesco.trim() || null,
+          porcentaje: b.porcentaje ? parseFloat(b.porcentaje) : null,
+          es_principal: b.es_principal,
+        }))
+        const { error: benErr } = await supabase.from('socio_beneficiarios').insert(rows)
+        if (benErr) {
+          setError(`Socio registrado, pero no se pudieron guardar los beneficiarios: ${benErr.message}`)
+          setLoading(false)
+          return
+        }
+      }
+    } else {
+      const { error: err } = await supabase.from('socios').update(payload).eq('id', socioId!)
+      if (err) {
+        setError(err.message)
+        setLoading(false)
+        return
+      }
     }
 
     router.push(redirectTo)
@@ -200,19 +261,44 @@ export default function SocioForm({ initialData, socioId, mode, cancelHref, redi
           </div>
         </FormSection>
 
-        <FormSection title="Beneficiario FPS">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <Field label="Nombre del Beneficiario">
-              <input name="beneficiario_nombre" value={form.beneficiario_nombre} onChange={set} className={inputCls} />
-            </Field>
-            <Field label="DNI del Beneficiario">
-              <input name="beneficiario_dni" value={form.beneficiario_dni} onChange={set} className={inputCls} />
-            </Field>
-            <Field label="Parentesco">
-              <input name="beneficiario_parentesco" value={form.beneficiario_parentesco} onChange={set} className={inputCls} placeholder="Ej: Cónyuge, Hijo/a" />
-            </Field>
-          </div>
-        </FormSection>
+        {mode === 'create' && (
+          <FormSection title="Beneficiarios FPS" description="Puedes registrar uno o varios beneficiarios para este socio.">
+            <div className="space-y-3">
+              {beneficiarios.map((b, i) => (
+                <div key={i} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 items-end bg-slate-50 border border-slate-200 rounded-lg p-3">
+                  <Field label="Nombres">
+                    <input value={b.nombres} onChange={e => updateBeneficiario(i, 'nombres', e.target.value)} className={inputCls} />
+                  </Field>
+                  <Field label="DNI">
+                    <input value={b.dni} onChange={e => updateBeneficiario(i, 'dni', e.target.value)} maxLength={8} inputMode="numeric" className={inputCls} />
+                  </Field>
+                  <Field label="Parentesco">
+                    <input value={b.parentesco} onChange={e => updateBeneficiario(i, 'parentesco', e.target.value)} placeholder="Ej: Cónyuge, Hijo/a" className={inputCls} />
+                  </Field>
+                  <Field label="Porcentaje (%)">
+                    <input type="number" min="0" max="100" step="0.01" value={b.porcentaje} onChange={e => updateBeneficiario(i, 'porcentaje', e.target.value)} className={inputCls} />
+                  </Field>
+                  <div className="flex items-center justify-between gap-2">
+                    <label className="flex items-center gap-1.5 text-xs text-slate-600">
+                      <input type="checkbox" checked={b.es_principal} onChange={e => updateBeneficiario(i, 'es_principal', e.target.checked)} className="rounded" />
+                      Principal
+                    </label>
+                    <button type="button" onClick={() => removeBeneficiario(i)} className="p-1.5 text-slate-400 hover:text-red-600 rounded">
+                      <Trash2 size={15} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={addBeneficiario}
+                className="flex items-center gap-1.5 text-sm text-[#1A56DB] hover:underline"
+              >
+                <Plus size={15} /> Agregar beneficiario
+              </button>
+            </div>
+          </FormSection>
+        )}
 
         {error && (
           <InlineAlert variant="danger">{error}</InlineAlert>
