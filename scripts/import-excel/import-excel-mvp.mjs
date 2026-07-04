@@ -24,7 +24,9 @@ import { fileURLToPath } from 'url'
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = resolve(__dirname, '../..')
 const DOCS_DIR = resolve(ROOT, 'docs/ai-recovery')
+const EXPORT_DIR = resolve(ROOT, 'exports/pagos-cuotas-dryrun')
 const XLSX = await import('xlsx').then(m => m.default || m)
+const { regenerarCronogramas, vincularPagosMatchAlto } = await import('../lib/post-import-steps.mjs')
 
 // ─── Modo ────────────────────────────────────────────────────────────────────
 
@@ -707,11 +709,25 @@ async function applyImport() {
   console.log(`  Pagos     : ${nPagos}`)
   console.log(`  Aportes   : ${nAportes}`)
   console.log(`${'═'.repeat(56)}`)
-  console.log('\n⚠️  Pendientes:')
+
+  // ─── Post-import automático: cronogramas + vínculo de pagos claros ────────
+  // Determinístico y sin ambigüedad -> se aplica solo. Los casos ambiguos
+  // (match_medio/ambiguo) NO se tocan, quedan en un Excel para revisión.
+  const resultadoCronogramas = await regenerarCronogramas(sb)
+  const resultadoVinculo = await vincularPagosMatchAlto(sb, { exportDir: EXPORT_DIR })
+
+  writeFileSync(
+    resolve(DOCS_DIR, 'post_import_finalize_report.json'),
+    JSON.stringify({ generado: new Date().toISOString(), cronogramas: resultadoCronogramas, vinculo_pagos: resultadoVinculo }, null, 2),
+    'utf8',
+  )
+
+  console.log('\n⚠️  Pendientes (requieren revisión manual):')
   console.log('   - Completar genero/estado_civil de socios en módulo Socios')
   console.log('   - Completar tasa_interes y tipo_credito en módulo Créditos')
-  console.log('   - cronograma_cuotas vacío — regenerar en app o via RPC')
-  console.log('   - id_credito en pagos = NULL — asociar manualmente si se requiere')
+  console.log(`   - Fecha de Ingreso de socios quedó en la fecha de hoy (no hay fuente en Excel) — corregir manualmente si se conoce la real`)
+  console.log(`   - ${resultadoVinculo.matchMedio + resultadoVinculo.ambiguo} pagos requieren revisión manual (ver Excel generado en exports/pagos-cuotas-dryrun/)`)
+  console.log('   - Aplicar montos de pagos a cronograma_cuotas sigue siendo un paso manual separado (dry-run + confirmación)')
 }
 
 applyImport().catch(e => { console.error('\n❌ Error en apply:', e.message); process.exit(1) })

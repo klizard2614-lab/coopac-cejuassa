@@ -35,6 +35,7 @@
     "check:excel-import-prep": "node scripts/check-excel-import-prep.mjs",
     "import:excel:mvp:dry-run": "node scripts/import-excel/import-excel-mvp.mjs --dry-run",
     "import:excel:mvp:apply": "node scripts/import-excel/import-excel-mvp.mjs --apply",
+    "post-import:finalize": "node scripts/post-import-finalize.mjs",
     "check:excel-import-mvp": "node scripts/check-excel-import-mvp.mjs",
     "audit:post-excel-import": "node scripts/audit-post-excel-import.mjs",
     "check:post-excel-import-audit": "node scripts/check-post-excel-import-audit.mjs",
