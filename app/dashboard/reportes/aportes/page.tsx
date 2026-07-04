@@ -21,6 +21,11 @@ type AporteRow = {
   } | null
 }
 
+function observacionVisible(obs: string | null): string {
+  if (!obs) return ''
+  return /^importado desde/i.test(obs.trim()) ? '' : obs
+}
+
 const TIPO_LABELS: Record<TipoAporte, string> = {
   aporte: 'Aporte',
   retiro_parcial: 'Retiro Parcial',
@@ -140,7 +145,7 @@ export default function ReporteAportesPage() {
       f.saldo_anterior,
       f.monto,
       f.saldo_nuevo,
-      f.observacion ?? '',
+      observacionVisible(f.observacion),
     ])
 
     rows.push([] as unknown as (string | number)[])
@@ -318,8 +323,8 @@ export default function ReporteAportesPage() {
                           S/ {fmt(f.saldo_nuevo)}
                         </td>
                         <td className="px-4 py-3 text-sm text-gray-500 max-w-[180px]">
-                          <span className="block truncate" title={f.observacion ?? ''}>
-                            {f.observacion ?? '—'}
+                          <span className="block truncate" title={observacionVisible(f.observacion)}>
+                            {observacionVisible(f.observacion) || '—'}
                           </span>
                         </td>
                       </tr>
