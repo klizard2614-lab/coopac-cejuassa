@@ -237,7 +237,7 @@ export default function ConfiguracionPage() {
       {/* ── Sección 3: Accesos rápidos ── */}
       <section className="max-w-2xl">
         <h2 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">Administración</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Link
             href="/dashboard/configuracion/convenios"
             className="bg-white rounded-xl border border-slate-200 p-5 hover:border-slate-300 hover:shadow-sm transition-all"
@@ -258,20 +258,6 @@ export default function ConfiguracionPage() {
             <p className="text-sm font-semibold text-slate-800">Gestionar Usuarios</p>
             <p className="text-xs text-slate-400 mt-1">Roles y accesos al sistema</p>
           </Link>
-          <a
-            href={(() => {
-              const url = process.env.NEXT_PUBLIC_SUPABASE_URL ?? ''
-              const projectId = url.split('//')[1]?.split('.')[0] ?? ''
-              return projectId ? `https://supabase.com/dashboard/project/${projectId}` : 'https://supabase.com/dashboard'
-            })()}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="bg-white rounded-xl border border-slate-200 p-5 hover:border-slate-300 hover:shadow-sm transition-all"
-          >
-            <div className="w-9 h-9 rounded-lg bg-slate-50 flex items-center justify-center mb-3 text-lg">🗄️</div>
-            <p className="text-sm font-semibold text-slate-800">Panel Supabase ↗</p>
-            <p className="text-xs text-slate-400 mt-1">Administración directa de base de datos</p>
-          </a>
         </div>
 
         {cfg?.updated_at && (
