@@ -1,0 +1,13 @@
+-- PLACEHOLDER — NO EJECUTAR CONTRA PRODUCCIÓN
+--
+-- Esta migración existía en el historial remoto (supabase_migrations) antes de que
+-- se inicializara la carpeta supabase/migrations/ localmente.
+--
+-- Fue aplicada manualmente en Supabase Dashboard el 2026-06-05 y quedó registrada
+-- con ID 20260605112510 en la tabla supabase_migrations del proyecto ljdjbhsipgkxlgnprzhm.
+--
+-- Se conserva aquí como archivo local para alinear el historial del CLI con el remoto.
+-- Remote ya tiene este ID registrado — no se debe ejecutar ni aplicar de nuevo.
+--
+-- Contenido real: correspondía al primer registro de RPC A (decrementar_saldo_capital),
+-- aplicada y probada exitosamente antes de inicializar el CLI.

@@ -1,0 +1,25 @@
+{
+  "fase": "10K-2A",
+  "modo": "DRY-RUN",
+  "generated_at": "2026-07-04T01:29:56.434Z",
+  "totales": {
+    "total_pagos_recibos": 832,
+    "pagos_con_credito": 28,
+    "pagos_sin_credito": 804,
+    "pagos_monto_claro_solo_credito": 1,
+    "pagos_monto_claro_mixto": 25,
+    "pagos_no_aplicables": 2,
+    "pagos_ambiguos": 2,
+    "cuotas_pendientes_global": 911,
+    "cuotas_parciales_global": 0,
+    "cuotas_pagadas_global": 0,
+    "creditos_con_pagos": 27,
+    "creditos_sin_cronograma": 1,
+    "propuestas_generadas": 34,
+    "cuotas_quedarian_pagadas": 8,
+    "cuotas_quedarian_parciales": 26,
+    "cuotas_unicas_afectadas": 33,
+    "monto_total_propuesto": 8870.7,
+    "filas_pagos_cuotas_aplicaciones": 0
+  }
+}

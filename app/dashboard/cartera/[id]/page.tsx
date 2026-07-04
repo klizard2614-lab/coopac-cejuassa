@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase'
+import { formatNombrePersona } from '@/lib/formatNombre'
+import { PageFrame, DetailHero, DetailSection, FieldGrid, FieldItem, btnGhost } from '../../_components/ui'
 
 // ─── tipos ────────────────────────────────────────────────────────────────────
 
@@ -111,14 +113,6 @@ function formatDate(d: string) {
   return `${day}/${m}/${y}`
 }
 
-function DataRow({ label, value }: { label: string; value: React.ReactNode }) {
-  return (
-    <div className="flex justify-between py-2.5 border-b border-gray-100 last:border-0">
-      <span className="text-sm text-gray-500">{label}</span>
-      <span className="text-sm font-medium text-gray-800 text-right">{value}</span>
-    </div>
-  )
-}
 
 // ─── componente ───────────────────────────────────────────────────────────────
 
@@ -195,125 +189,116 @@ export default function CarteraDetallePage() {
     })
   }, [id])
 
-  if (loading) return <div className="p-8 text-sm text-gray-400">Cargando...</div>
-  if (notFound || !credito) return <div className="p-8 text-sm text-gray-400">Crédito no encontrado.</div>
+  if (loading) return <div className="min-h-full bg-slate-50 p-8 text-sm text-slate-400">Cargando...</div>
+  if (notFound || !credito) {
+    return (
+      <PageFrame>
+        <p className="text-sm text-slate-500">Crédito no encontrado.</p>
+        <Link href="/dashboard/cartera" className={`${btnGhost} mt-2 inline-flex`}>Volver a Cartera</Link>
+      </PageFrame>
+    )
+  }
 
   const nombreCompleto = credito.socios
-    ? `${credito.socios.apellidos}, ${credito.socios.nombres}`
+    ? formatNombrePersona(credito.socios.apellidos, credito.socios.nombres)
     : '—'
 
   const cuotasPendientes = cuotas.filter(c => c.estado === 'pendiente' || c.estado === 'parcial' || c.estado === 'vencida')
 
   return (
-    <div className="p-8 max-w-5xl">
-      {/* Encabezado */}
-      <div className="mb-6">
-        <Link
-          href="/dashboard/cartera"
-          className="text-sm text-gray-400 hover:text-gray-600 mb-2 inline-block transition-colors"
-        >
-          ← Volver
-        </Link>
-        <div className="flex items-center gap-3 flex-wrap">
-          <h1 className="text-2xl font-bold text-gray-800">{nombreCompleto}</h1>
-          <ClasifBadge c={clasificacion} />
-        </div>
-        <p className="text-sm text-gray-500 mt-1">DNI: {credito.socios?.dni ?? '—'} · Nº Socio: {credito.socios?.nro_socio ?? '—'}</p>
+    <PageFrame>
+      <Link href="/dashboard/cartera" className={`${btnGhost} mb-4 inline-flex`}>← Volver a Cartera</Link>
+
+      <DetailHero
+        title={nombreCompleto}
+        subtitle={`DNI: ${credito.socios?.dni ?? '—'} · Nº Socio: ${credito.socios?.nro_socio ?? '—'}`}
+        badge={<ClasifBadge c={clasificacion} />}
+      />
+
+      {/* Tarjetas resumen */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
+        {[
+          { label: 'Saldo Capital',      value: `S/ ${fmt(credito.saldo_capital)}` },
+          { label: 'Días de Mora',       value: `${diasMora} días`, danger: diasMora > 0 },
+          { label: 'Provisión Requerida',value: `S/ ${fmt(provisionRequerida)}` },
+          { label: 'Cuotas Pendientes',  value: String(cuotasPendientes.length) },
+        ].map(card => (
+          <div key={card.label} className="bg-white rounded-xl border border-slate-200 p-4">
+            <p className="text-xs text-slate-400 uppercase tracking-wide mb-1">{card.label}</p>
+            <p className={`text-lg font-bold tabular-nums ${card.danger ? 'text-red-600' : 'text-slate-800'}`}>{card.value}</p>
+          </div>
+        ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        {/* Datos del crédito */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
-          <h2 className="text-base font-semibold text-gray-700 mb-3">Datos del crédito</h2>
-          <DataRow label="Nº Pagaré" value={credito.nro_pagare} />
-          <DataRow label="Fecha desembolso" value={formatDate(credito.fecha_desembolso)} />
-          <DataRow label="Monto aprobado" value={`S/ ${fmt(credito.monto_aprobado)}`} />
-          <DataRow label="Monto girado neto" value={`S/ ${fmt(credito.monto_girado_neto)}`} />
-          <DataRow label="Tasa de interés anual" value={`${fmt(credito.tasa_interes)}%`} />
-          <DataRow label="Plazo" value={`${credito.plazo_meses} meses`} />
-          <DataRow label="Cuota mensual" value={`S/ ${fmt(credito.cuota_mensual)}`} />
-          <DataRow label="Tipo de crédito" value={credito.tipo_credito ?? '—'} />
-          <DataRow label="Convenio" value={credito.socios?.convenios?.nombre ?? '—'} />
-        </div>
+      <DetailSection title="Datos del Crédito">
+        <FieldGrid cols={4}>
+          <FieldItem label="Nº Pagaré" value={credito.nro_pagare} accent />
+          <FieldItem label="Fecha Desembolso" value={formatDate(credito.fecha_desembolso)} />
+          <FieldItem label="Tipo de Crédito" value={credito.tipo_credito ?? undefined} />
+          <FieldItem label="Convenio" value={credito.socios?.convenios?.nombre ?? undefined} />
+          <FieldItem label="Monto Aprobado" value={`S/ ${fmt(credito.monto_aprobado)}`} mono />
+          <FieldItem label="Monto Girado Neto" value={`S/ ${fmt(credito.monto_girado_neto)}`} mono />
+          <FieldItem label="Tasa TEA" value={`${fmt(credito.tasa_interes)}%`} mono />
+          <FieldItem label="Plazo" value={`${credito.plazo_meses} meses`} />
+          <FieldItem label="Cuota Mensual" value={`S/ ${fmt(credito.cuota_mensual)}`} mono />
+        </FieldGrid>
+      </DetailSection>
 
-        {/* Estado actual */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
-          <h2 className="text-base font-semibold text-gray-700 mb-3">Estado actual</h2>
-          <DataRow label="Saldo capital actual" value={`S/ ${fmt(credito.saldo_capital)}`} />
-          <DataRow
-            label="Días de mora"
-            value={
-              <span className={diasMora > 0 ? 'text-red-600 font-semibold' : 'text-gray-800'}>
-                {diasMora} días
-              </span>
-            }
-          />
-          <DataRow label="Clasificación" value={<ClasifBadge c={clasificacion} />} />
-          <DataRow
-            label="Tasa de provisión"
-            value={`${(tasaProvision * 100).toFixed(0)}%`}
-          />
-          <DataRow label="Provisión requerida" value={`S/ ${fmt(provisionRequerida)}`} />
-          <DataRow label="Provisión constituida" value={`S/ ${fmt(provisionRequerida)}`} />
-          {cuotasPendientes.length > 0 && (
-            <div className="mt-3 pt-3 border-t border-gray-100">
-              <p className="text-xs text-gray-500">
-                {cuotasPendientes.length} {cuotasPendientes.length === 1 ? 'cuota pendiente' : 'cuotas pendientes'}
-              </p>
-            </div>
-          )}
-        </div>
-      </div>
+      <DetailSection title="Estado de Cartera">
+        <FieldGrid cols={4}>
+          <FieldItem label="Saldo Capital" value={`S/ ${fmt(credito.saldo_capital)}`} mono accent />
+          <FieldItem label="Días de Mora" value={`${diasMora} días`} mono />
+          <FieldItem label="Clasificación" value={<ClasifBadge c={clasificacion} />} />
+          <FieldItem label="Tasa de Provisión" value={`${(tasaProvision * 100).toFixed(0)}%`} mono />
+          <FieldItem label="Provisión Requerida" value={`S/ ${fmt(provisionRequerida)}`} mono />
+          <FieldItem label="Provisión Constituida" value={`S/ ${fmt(provisionRequerida)}`} mono />
+        </FieldGrid>
+      </DetailSection>
 
       {/* Cronograma de cuotas */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-base font-semibold text-gray-700">Cronograma de cuotas</h2>
+      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden mb-4">
+        <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+          <h2 className="text-sm font-semibold text-slate-700">Cronograma de Cuotas</h2>
           {cuotasPendientes.length > 0 && (
-            <p className="text-xs text-gray-400 mt-0.5">
+            <span className="text-xs text-slate-500">
               {cuotasPendientes.length} {cuotasPendientes.length === 1 ? 'cuota pendiente' : 'cuotas pendientes'}
-            </p>
+            </span>
           )}
         </div>
 
         {cuotas.length === 0 ? (
-          <div className="p-10 text-center text-sm text-gray-400">No hay cuotas registradas</div>
+          <div className="p-10 text-center text-sm text-slate-400">No hay cuotas registradas</div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-gray-200 bg-gray-50">
+            <table className="w-full text-sm">
+              <thead className="bg-slate-50 border-b border-slate-200">
+                <tr>
                   {['N°', 'Vencimiento', 'Capital', 'Interés', 'Total', 'Capital Pagado', 'Estado'].map(h => (
-                    <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap">
+                    <th key={h} className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wide whitespace-nowrap">
                       {h}
                     </th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody>
                 {cuotas.map(cu => {
                   const esVencida = cu.estado === 'vencida'
                   return (
-                    <tr key={cu.id} className={`transition-colors ${esVencida ? 'bg-red-50 hover:bg-red-100' : 'hover:bg-gray-50'}`}>
-                      <td className="px-4 py-3 text-sm text-gray-600 whitespace-nowrap">
-                        {cu.nro_cuota}
-                      </td>
-                      <td className={`px-4 py-3 text-sm whitespace-nowrap ${esVencida ? 'text-red-600 font-medium' : 'text-gray-600'}`}>
+                    <tr
+                      key={cu.id}
+                      className={`border-b border-slate-100 last:border-0 transition-colors ${
+                        esVencida ? 'bg-red-50/40' : cu.estado === 'pagada' ? 'bg-green-50/30' : 'hover:bg-slate-50/50'
+                      }`}
+                    >
+                      <td className="px-4 py-2.5 font-medium text-slate-700">{cu.nro_cuota}</td>
+                      <td className={`px-4 py-2.5 whitespace-nowrap ${esVencida ? 'text-red-600 font-medium' : 'text-slate-600'}`}>
                         {formatDate(cu.fecha_vencimiento)}
                       </td>
-                      <td className="px-4 py-3 text-sm text-gray-700 whitespace-nowrap">
-                        S/ {fmt(cu.capital)}
-                      </td>
-                      <td className="px-4 py-3 text-sm text-gray-700 whitespace-nowrap">
-                        S/ {fmt(cu.interes)}
-                      </td>
-                      <td className="px-4 py-3 text-sm font-semibold text-gray-900 whitespace-nowrap">
-                        S/ {fmt(cu.cuota_total)}
-                      </td>
-                      <td className="px-4 py-3 text-sm text-gray-700 whitespace-nowrap">
-                        S/ {fmt(cu.capital_pagado)}
-                      </td>
-                      <td className="px-4 py-3 whitespace-nowrap">
+                      <td className="px-4 py-2.5 text-slate-700 whitespace-nowrap tabular-nums">S/ {fmt(cu.capital)}</td>
+                      <td className="px-4 py-2.5 text-slate-700 whitespace-nowrap tabular-nums">S/ {fmt(cu.interes)}</td>
+                      <td className="px-4 py-2.5 font-semibold text-slate-900 whitespace-nowrap tabular-nums">S/ {fmt(cu.cuota_total)}</td>
+                      <td className="px-4 py-2.5 text-slate-700 whitespace-nowrap tabular-nums">S/ {fmt(cu.capital_pagado)}</td>
+                      <td className="px-4 py-2.5 whitespace-nowrap">
                         <EstadoBadge e={cu.estado} />
                       </td>
                     </tr>
@@ -324,6 +309,6 @@ export default function CarteraDetallePage() {
           </div>
         )}
       </div>
-    </div>
+    </PageFrame>
   )
 }

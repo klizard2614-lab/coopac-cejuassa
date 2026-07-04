@@ -5,8 +5,10 @@ import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase'
 import SocioForm, { type SocioFormData } from '../../_components/SocioForm'
+import { BeneficiariosSection } from '../../_components/BeneficiariosSection'
 import { useRol } from '@/lib/useRol'
 import AccesoDenegado from '@/components/AccesoDenegado'
+import { PageFrame, PageToolbar, FormPanel, FormSection, btnGhost } from '../../../_components/ui'
 
 const PUEDE_EDITAR_SOCIOS = ['admin', 'creditos']
 
@@ -42,43 +44,40 @@ export default function EditarSocioPage() {
             beneficiario_nombre:    data.beneficiario_nombre ?? '',
             beneficiario_dni:       data.beneficiario_dni ?? '',
             beneficiario_parentesco: data.beneficiario_parentesco ?? '',
+            genero:                 data.genero ?? '',
+            estado_civil:           data.estado_civil ?? '',
           })
         }
         setLoading(false)
       })
   }, [id])
 
-  if (checkingRol) return <div className="p-8 text-sm text-gray-400">Verificando acceso...</div>
+  if (checkingRol) return <div className="min-h-full bg-slate-50 p-8 text-sm text-slate-400">Verificando acceso...</div>
   if (!PUEDE_EDITAR_SOCIOS.includes(rol ?? '')) {
     return <AccesoDenegado mensaje="Solo los roles Administrador y Créditos pueden editar socios." />
   }
 
   if (loading) {
-    return <div className="p-8 text-sm text-gray-400">Cargando...</div>
+    return <div className="min-h-full bg-slate-50 p-8 text-sm text-slate-400">Cargando...</div>
   }
 
   if (notFound || !initialData) {
     return (
-      <div className="p-8">
-        <p className="text-sm text-gray-500">Socio no encontrado.</p>
-        <Link href="/dashboard/socios" className="text-sm text-[#1e3a5f] underline mt-2 inline-block">
-          Volver a Socios
-        </Link>
-      </div>
+      <PageFrame>
+        <p className="text-sm text-slate-500">Socio no encontrado.</p>
+        <Link href="/dashboard/socios" className={`${btnGhost} mt-2 inline-flex`}>Volver a Socios</Link>
+      </PageFrame>
     )
   }
 
   return (
-    <div className="p-8">
-      <div className="mb-6">
-        <Link
-          href={`/dashboard/socios/${id}`}
-          className="text-sm text-gray-400 hover:text-gray-600 mb-1 inline-block transition-colors"
-        >
-          ← Volver al detalle
-        </Link>
-        <h1 className="text-2xl font-bold text-gray-800">Editar Socio</h1>
-      </div>
+    <PageFrame>
+      <PageToolbar
+        title="Editar Socio"
+        actions={
+          <Link href={`/dashboard/socios/${id}`} className={btnGhost}>Cancelar</Link>
+        }
+      />
 
       <SocioForm
         mode="edit"
@@ -87,6 +86,21 @@ export default function EditarSocioPage() {
         cancelHref={`/dashboard/socios/${id}`}
         redirectTo={`/dashboard/socios/${id}`}
       />
-    </div>
+
+      {/* Beneficiarios múltiples — sección independiente del formulario principal */}
+      <FormPanel>
+        <FormSection title="Beneficiarios">
+          <BeneficiariosSection
+            socioId={Number(id)}
+            legacy={{
+              beneficiario_nombre:    initialData.beneficiario_nombre ?? null,
+              beneficiario_dni:       initialData.beneficiario_dni ?? null,
+              beneficiario_parentesco: initialData.beneficiario_parentesco ?? null,
+            }}
+            rol={rol}
+          />
+        </FormSection>
+      </FormPanel>
+    </PageFrame>
   )
 }

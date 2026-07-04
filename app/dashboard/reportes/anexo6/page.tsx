@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase'
+import { formatNombrePersona } from '@/lib/formatNombre'
 
 // ─── tipos ────────────────────────────────────────────────────────────────────
 
@@ -43,6 +44,8 @@ type FilaReporte = {
   clasif_num: number
   tasa_provision: number
   provision_requerida: number
+  provision_constituida: number
+  provision_constituida_fuente?: 'criterio_contable_confirmado' | 'real'
   cuotas_pagadas: number
   fecha_ultima_cuota: string
   capital_vigente: number
@@ -55,12 +58,12 @@ type FilaReporte = {
 const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
                'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre']
 
-function getClasificacion(dias: number): { label: string; num: number; tasa: number } {
-  if (dias <= 8)   return { label: 'Normal',     num: 0, tasa: 0.01 }
-  if (dias <= 30)  return { label: 'CPP',        num: 1, tasa: 0.05 }
-  if (dias <= 60)  return { label: 'Deficiente', num: 2, tasa: 0.25 }
-  if (dias <= 120) return { label: 'Dudoso',     num: 3, tasa: 0.60 }
-  return             { label: 'Pérdida',     num: 4, tasa: 1.00 }
+function getClasificacion(dias: number, t: TasasProvision): { label: string; num: number; tasa: number } {
+  if (dias <= 8)   return { label: 'Normal',     num: 0, tasa: t.normal }
+  if (dias <= 30)  return { label: 'CPP',        num: 1, tasa: t.cpp }
+  if (dias <= 60)  return { label: 'Deficiente', num: 2, tasa: t.deficiente }
+  if (dias <= 120) return { label: 'Dudoso',     num: 3, tasa: t.dudoso }
+  return             { label: 'Pérdida',     num: 4, tasa: t.perdida }
 }
 
 function diasEntre(fechaStr: string, hoy: Date): number {
@@ -107,6 +110,22 @@ function ClasifBadge({ c }: { c: string }) {
 
 const PAGE_SIZE = 50
 
+type TasasProvision = {
+  normal: number
+  cpp: number
+  deficiente: number
+  dudoso: number
+  perdida: number
+}
+
+const TASAS_DEFECTO: TasasProvision = {
+  normal: 0.01,
+  cpp: 0.05,
+  deficiente: 0.25,
+  dudoso: 0.60,
+  perdida: 1.00,
+}
+
 // ─── componente ───────────────────────────────────────────────────────────────
 
 export default function Anexo6Page() {
@@ -117,6 +136,7 @@ export default function Anexo6Page() {
   const [loading, setLoading] = useState(false)
   const [generado, setGenerado] = useState(false)
   const [pagina, setPagina] = useState(1)
+  const [tasasWarning, setTasasWarning] = useState(false)
 
   const yearOptions = useMemo(() => buildYearOptions(), [])
 
@@ -126,6 +146,24 @@ export default function Anexo6Page() {
     setPagina(1)
     const sb = createClient()
 
+    let tasasActivas = TASAS_DEFECTO
+    const cfgRes = await sb
+      .from('configuracion')
+      .select('provision_normal,provision_cpp,provision_deficiente,provision_dudoso,provision_perdida')
+      .eq('id', 1)
+      .single()
+    if (cfgRes.data) {
+      tasasActivas = {
+        normal: cfgRes.data.provision_normal ?? TASAS_DEFECTO.normal,
+        cpp: cfgRes.data.provision_cpp ?? TASAS_DEFECTO.cpp,
+        deficiente: cfgRes.data.provision_deficiente ?? TASAS_DEFECTO.deficiente,
+        dudoso: cfgRes.data.provision_dudoso ?? TASAS_DEFECTO.dudoso,
+        perdida: cfgRes.data.provision_perdida ?? TASAS_DEFECTO.perdida,
+      }
+      setTasasWarning(false)
+    } else {
+      setTasasWarning(true)
+    }
     const [creditosRes, cuotasRes] = await Promise.all([
       sb
         .from('creditos')
@@ -170,7 +208,7 @@ export default function Anexo6Page() {
         dias_mora = Math.max(0, diasEntre(minFecha, hoy))
       }
 
-      const { label, num, tasa } = getClasificacion(dias_mora)
+      const { label, num, tasa } = getClasificacion(dias_mora, tasasActivas)
       const provision_requerida = (c.saldo_capital ?? 0) * tasa
       const cuotas_pagadas = cuotas.filter(cu => cu.estado === 'pagada').length
       const ultima = cuotas.length > 0
@@ -189,6 +227,8 @@ export default function Anexo6Page() {
         clasif_num: num,
         tasa_provision: tasa,
         provision_requerida,
+        provision_constituida: provision_requerida,
+        provision_constituida_fuente: 'criterio_contable_confirmado' as const,
         cuotas_pagadas,
         fecha_ultima_cuota: ultima,
         capital_vigente,
@@ -212,22 +252,22 @@ export default function Anexo6Page() {
 
     const headers = [
       'Fila',
-      'Apellidos y Nombres',
+      'Apellidos y Nombres / Razón Social',
       'Fecha de Nacimiento',
       'Género',
       'Estado Civil',
-      'Sigla Empresa',
+      'Sigla de la Empresa',
       'Código Socio',
       'Partida Registral',
       'Tipo de Documento',
       'Número de Documento',
       'Tipo de Persona',
       'Domicilio',
-      'Relación Laboral Coop.',
-      'Clasificación Deudor',
-      'Clasif. Alineam. Interno',
-      'Código Agencia',
-      'Moneda',
+      'Relación Laboral con la Cooperativa',
+      'Clasificación del Deudor',
+      'Clasificación del Deudor con Alineamiento Interno',
+      'Código de Agencia',
+      'Moneda del crédito',
       'Número de Crédito',
       'Tipo de Crédito',
       'Sub Tipo de Crédito',
@@ -242,26 +282,35 @@ export default function Anexo6Page() {
       'Capital Vencido',
       'Capital en Cobranza Judicial',
       'Capital Contingente',
-      'Cta. Contable Cap. Contingente',
+      'Cuenta Contable del Capital Contingente',
       'Días de Mora',
-      'Saldo Garantías Preferidas',
-      'Saldo Garantías Autoliquidables',
+      'Saldos de Garantías Preferidas',
+      'Saldos de Garantías Autolíquidables',
       'Provisiones Requeridas',
       'Provisiones Constituidas',
-      'Saldo Créditos Castigados',
-      'Cta. Contable Créd. Castigado',
+      'Saldo de Créditos Castigados',
+      'Cuenta Contable del Crédito Castigado',
       'Rendimiento Devengado',
       'Intereses en Suspenso',
       'Ingresos Diferidos',
       'Tipo de Producto',
-      'N° Cuotas Programadas',
-      'N° Cuotas Pagadas',
-      'Periodicidad de la Cuota',
+      'Número de Cuotas Programadas',
+      'Número de Cuotas Pagadas',
+      'Periodicidad de la cuota',
       'Periodo de Gracia',
-      'Fecha Vencimiento Original',
-      'Fecha Vencimiento Actual',
-      'Col50','Col51','Col52','Col53','Col54',
-      'Col55','Col56','Col57','Col58','Col59','Col60',
+      'Fecha de Vencimiento Original del Crédito',
+      'Fecha de Vencimiento Actual del Crédito',
+      'Saldo de Créditos con Sustitución de Contraparte Crediticia',
+      'Saldo de Créditos que no cuentan con cobertura',
+      'Saldo Capital de Créditos Reprogramados',
+      'Saldo Capital en Cuenta de Orden por efecto del Covid',
+      'Subcuenta de orden',
+      'Rendimiento Devengado por efecto del COVID 19',
+      'Saldo de Garantías con Sustitución de Contraparte',
+      'Saldo Capital de Créditos Reprogramados por efecto del COVID 19',
+      'Saldo de Créditos dentro del alcance del DL N°1508',
+      'Saldo Capital en Cuenta de Orden Programa IMPULSO MYPERU',
+      'Rendimiento Devengado por Programa IMPULSO MYPERU',
     ]
 
     const rows = filas.map(f => {
@@ -291,7 +340,7 @@ export default function Anexo6Page() {
         f.credito.monto_aprobado,
         f.credito.tasa_interes,
         f.credito.saldo_capital,
-        '1411030604',
+        '1411050604',
         f.capital_vigente,
         0,
         0,
@@ -303,7 +352,7 @@ export default function Anexo6Page() {
         0,
         0,
         f.provision_requerida,
-        f.provision_requerida,
+        f.provision_constituida,
         0,
         '',
         0,
@@ -322,10 +371,11 @@ export default function Anexo6Page() {
 
     const ws = utils.aoa_to_sheet([headers, ...rows])
     const wb = utils.book_new()
-    utils.book_append_sheet(wb, ws, 'Anexo6')
+    const nombreHoja = `${MESES[mes - 1].toUpperCase()}${anio} sin CEROS`
+    utils.book_append_sheet(wb, ws, nombreHoja)
 
     const mesStr = String(mes).padStart(2, '0')
-    writeFile(wb, `Anexo6_CEJUASSA_${mesStr}${anio}.xlsx`)
+    writeFile(wb, `Anexo6_CEJUASSA_${mesStr}${anio}_sin_ceros.xlsx`)
   }
 
   // Totales
@@ -405,6 +455,30 @@ export default function Anexo6Page() {
         </div>
       </div>
 
+      {/* Banner advertencia tasas por defecto */}
+      {tasasWarning && (
+        <div className="mb-4 px-4 py-3 rounded-lg bg-amber-50 border border-amber-200 text-sm text-amber-800">
+          ⚠ Usando tasas de provisión SBS por defecto. Verifique los parámetros financieros en{' '}
+          <Link href="/dashboard/configuracion" className="underline font-medium">Configuración</Link>.
+        </div>
+      )}
+
+      {/* Banner DEMO permanente — datos no oficiales */}
+      <div className="mb-4 px-4 py-3 rounded-lg bg-red-50 border border-red-300 text-sm text-red-800">
+        <p className="font-bold mb-1">⚠ DATOS DE PRUEBA — NO OFICIALES</p>
+        <ul className="list-disc list-inside space-y-0.5 text-xs">
+          <li>Género exportado como <strong>M</strong> (temporal, todos los socios). Reemplazar con datos reales antes de envío SBS.</li>
+          <li>Estado civil exportado como <strong>S</strong> (temporal, todos los socios). Reemplazar con datos reales.</li>
+          <li>Subtipo de crédito SBS: <strong>por_confirmar</strong> para todos los créditos — pendiente de validación con Créditos.</li>
+        </ul>
+      </div>
+
+      {generado && filas.some(f => f.provision_constituida_fuente === 'criterio_contable_confirmado') && (
+        <div className="mb-4 px-4 py-3 rounded-lg bg-blue-50 border border-blue-200 text-sm text-blue-800">
+          ✓ Provisiones Constituidas calculadas igual a Provisiones Requeridas según criterio confirmado por Contabilidad.
+        </div>
+      )}
+
       {/* Tarjetas resumen */}
       {generado && (
         <>
@@ -470,7 +544,7 @@ export default function Anexo6Page() {
                         <tr key={f.credito.id} className="hover:bg-gray-50 transition-colors">
                           <td className="px-3 py-2.5 text-xs text-gray-400">{f.fila}</td>
                           <td className="px-3 py-2.5 text-sm font-medium text-gray-900 whitespace-nowrap">
-                            {f.credito.socios ? `${f.credito.socios.apellidos}, ${f.credito.socios.nombres}` : '—'}
+                            {f.credito.socios ? formatNombrePersona(f.credito.socios.apellidos, f.credito.socios.nombres) : '—'}
                           </td>
                           <td className="px-3 py-2.5 text-sm text-gray-600 whitespace-nowrap">
                             {f.credito.socios?.dni ?? '—'}
@@ -507,8 +581,8 @@ export default function Anexo6Page() {
                           <td className="px-3 py-2.5 text-sm text-gray-700 whitespace-nowrap">
                             S/ {fmt(f.provision_requerida)}
                           </td>
-                          <td className="px-3 py-2.5 text-sm text-gray-700 whitespace-nowrap">
-                            S/ {fmt(f.provision_requerida)}
+                          <td className="px-3 py-2.5 text-sm whitespace-nowrap">
+                            <span className="text-gray-700">S/ {fmt(f.provision_constituida)}</span>
                           </td>
                           <td className="px-3 py-2.5 text-sm text-gray-600 whitespace-nowrap text-center">
                             {f.credito.plazo_meses}

@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase'
+import { formatNombrePersona } from '@/lib/formatNombre'
+import { PageFrame, DetailHero, DetailSection, FieldGrid, FieldItem, btnGhost } from '../../_components/ui'
 
 type AporteDetalle = {
   id: number
@@ -39,15 +41,6 @@ function formatDate(d: string | null | undefined) {
   return `${parts[2]}/${parts[1]}/${parts[0]}`
 }
 
-function DataField({ label, value }: { label: string; value: string | null | undefined }) {
-  return (
-    <div>
-      <p className="text-xs text-gray-400 uppercase tracking-wide mb-0.5">{label}</p>
-      <p className="text-sm font-medium text-gray-800">{value ?? '—'}</p>
-    </div>
-  )
-}
-
 export default function AporteDetallePage() {
   const { id } = useParams() as { id: string }
   const [aporte, setAporte] = useState<AporteDetalle | null>(null)
@@ -65,104 +58,83 @@ export default function AporteDetallePage() {
       })
   }, [id])
 
-  if (loading) return <div className="p-8 text-sm text-gray-400">Cargando...</div>
+  if (loading) return <div className="min-h-full bg-slate-50 p-8 text-sm text-slate-400">Cargando...</div>
 
   if (!aporte) {
     return (
-      <div className="p-8">
-        <p className="text-sm text-gray-500">Aporte no encontrado.</p>
-        <Link href="/dashboard/aportes" className="text-sm underline mt-2 inline-block" style={{ color: '#1e3a5f' }}>
-          Volver a Aportes
-        </Link>
-      </div>
+      <PageFrame>
+        <p className="text-sm text-slate-500">Aporte no encontrado.</p>
+        <Link href="/dashboard/aportes" className={`${btnGhost} mt-2 inline-flex`}>Volver a Aportes</Link>
+      </PageFrame>
     )
   }
 
   const socioNombre = aporte.socios
-    ? `${aporte.socios.apellidos}, ${aporte.socios.nombres}`
+    ? formatNombrePersona(aporte.socios.apellidos, aporte.socios.nombres)
     : '—'
 
   return (
-    <div className="p-8">
-      {/* Encabezado */}
-      <div className="mb-6">
-        <Link
-          href="/dashboard/aportes"
-          className="text-sm text-gray-400 hover:text-gray-600 mb-1 inline-block transition-colors"
-        >
-          ← Volver
-        </Link>
-        <h1 className="text-2xl font-bold text-gray-800">Detalle de Aporte</h1>
-      </div>
+    <PageFrame>
+      <Link href="/dashboard/aportes" className={`${btnGhost} mb-4 inline-flex`}>← Volver a Aportes</Link>
 
-      <div className="space-y-5">
-        {/* Datos del socio */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
-          <h2 className="text-xs font-semibold uppercase tracking-wider mb-4 pb-2 border-b border-gray-100" style={{ color: '#1e3a5f' }}>
-            Datos del Socio
-          </h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
-            <DataField label="Socio" value={socioNombre} />
-            <DataField label="Nº Socio" value={aporte.socios?.nro_socio} />
-            <DataField label="DNI" value={aporte.socios?.dni} />
+      <DetailHero
+        title="Detalle de Aporte"
+        subtitle={socioNombre}
+      />
+
+      <DetailSection title="Datos del Socio">
+        <FieldGrid cols={3}>
+          <FieldItem label="Socio" value={socioNombre} />
+          <FieldItem label="Nº Socio" value={aporte.socios?.nro_socio} accent />
+          <FieldItem label="DNI" value={aporte.socios?.dni} mono />
+        </FieldGrid>
+      </DetailSection>
+
+      <DetailSection title="Detalle del Movimiento">
+        <FieldGrid cols={3}>
+          <FieldItem label="Fecha" value={formatDate(aporte.fecha)} />
+          <FieldItem label="Tipo de Movimiento" value={aporte.tipo} />
+          <FieldItem label="Monto Aportado" value={`S/ ${fmt(aporte.monto)}`} mono accent />
+          <FieldItem label="Saldo Anterior" value={`S/ ${fmt(aporte.saldo_anterior)}`} mono />
+          <FieldItem label="Saldo Nuevo (Acumulado)" value={`S/ ${fmt(aporte.saldo_nuevo)}`} mono />
+          <FieldItem
+            label="Recibo Vinculado"
+            value={
+              aporte.id_recibo && aporte.pagos_recibos
+                ? aporte.pagos_recibos.nro_recibo
+                : undefined
+            }
+          />
+        </FieldGrid>
+
+        {aporte.id_recibo && aporte.pagos_recibos && (
+          <div className="mt-4 pt-4 border-t border-slate-100">
+            <p className="text-xs text-slate-400 uppercase tracking-wide mb-1">Enlace al Recibo</p>
+            <Link
+              href={`/dashboard/pagos/${aporte.id_recibo}`}
+              className={btnGhost}
+            >
+              Ver recibo Nº {aporte.pagos_recibos.nro_recibo} →
+            </Link>
           </div>
-        </div>
+        )}
 
-        {/* Detalle del aporte */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
-          <h2 className="text-xs font-semibold uppercase tracking-wider mb-4 pb-2 border-b border-gray-100" style={{ color: '#1e3a5f' }}>
-            Detalle del Movimiento
-          </h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-5">
-            <DataField label="Fecha" value={formatDate(aporte.fecha)} />
-            <DataField label="Tipo de Movimiento" value={aporte.tipo} />
-            <DataField label="Monto Aportado" value={`S/ ${fmt(aporte.monto)}`} />
-            <DataField label="Saldo Anterior" value={`S/ ${fmt(aporte.saldo_anterior)}`} />
-            <DataField label="Saldo Nuevo (Acumulado)" value={`S/ ${fmt(aporte.saldo_nuevo)}`} />
-            <DataField
-              label="Recibo Vinculado"
-              value={
-                aporte.id_recibo && aporte.pagos_recibos
-                  ? aporte.pagos_recibos.nro_recibo
-                  : null
-              }
-            />
+        {aporte.observacion && (
+          <div className="mt-4 pt-4 border-t border-slate-100">
+            <p className="text-xs text-slate-400 uppercase tracking-wide mb-1">Observación</p>
+            <p className="text-sm text-slate-700 bg-slate-50 rounded-lg px-4 py-3 border border-slate-100">
+              {aporte.observacion}
+            </p>
           </div>
+        )}
+      </DetailSection>
 
-          {aporte.id_recibo && aporte.pagos_recibos && (
-            <div className="mt-4 pt-4 border-t border-gray-100">
-              <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">Enlace al Recibo</p>
-              <Link
-                href={`/dashboard/pagos/${aporte.id_recibo}`}
-                className="text-sm underline hover:opacity-80 transition-opacity"
-                style={{ color: '#1e3a5f' }}
-              >
-                Ver recibo Nº {aporte.pagos_recibos.nro_recibo}
-              </Link>
-            </div>
-          )}
-
-          {aporte.observacion && (
-            <div className="mt-4 pt-4 border-t border-gray-100">
-              <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">Observación</p>
-              <p className="text-sm text-gray-700 bg-gray-50 rounded-lg px-4 py-3 border border-gray-100">
-                {aporte.observacion}
-              </p>
-            </div>
-          )}
-        </div>
-
-        {/* Metadata */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
-          <h2 className="text-xs font-semibold uppercase tracking-wider mb-4 pb-2 border-b border-gray-100" style={{ color: '#1e3a5f' }}>
-            Información de Registro
-          </h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-5">
-            <DataField label="Registrado por" value={aporte.created_by} />
-            <DataField label="Fecha de Registro" value={formatDate(aporte.created_at)} />
-          </div>
-        </div>
-      </div>
-    </div>
+      <DetailSection title="Información de Registro">
+        <FieldGrid cols={3}>
+          <FieldItem label="Registrado por" value={aporte.created_by ?? undefined} />
+          <FieldItem label="Fecha de Registro" value={formatDate(aporte.created_at)} />
+        </FieldGrid>
+      </DetailSection>
+    </PageFrame>
   )
 }

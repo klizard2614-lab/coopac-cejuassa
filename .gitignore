@@ -42,3 +42,10 @@ next-env.d.ts
 
 .vercel
 .env*.local
+
+# archivos privados del cliente (sensibles, no subir al repo)
+_client_files/
+backups/
+exports/
+test-results/
+BACKUP_MANIFEST.md

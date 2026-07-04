@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase'
+import { formatNombrePersona } from '@/lib/formatNombre'
 
 // ── Tipos ─────────────────────────────────────────────────────────────────────
 
@@ -156,7 +157,7 @@ export default function PagoDetallePage() {
           <div className="flex items-center gap-3 mt-2">
             <EstadoBadge estado={pago.estado_flujo} />
             <span className="text-sm text-gray-500">
-              {pago.socios ? `${pago.socios.apellidos}, ${pago.socios.nombres}` : '—'}
+              {pago.socios ? formatNombrePersona(pago.socios.apellidos, pago.socios.nombres) : '—'}
             </span>
           </div>
         </div>

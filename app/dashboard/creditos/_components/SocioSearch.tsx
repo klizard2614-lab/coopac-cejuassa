@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { createClient } from '@/lib/supabase'
+import { formatNombrePersona } from '@/lib/formatNombre'
 
 type Socio = {
   id: string
@@ -57,7 +58,7 @@ export default function SocioSearch({ value, onChange }: Props) {
   }, [query])
 
   function select(s: Socio) {
-    const label = `${s.apellidos}, ${s.nombres} — DNI: ${s.dni} | Nº ${s.nro_socio}`
+    const label = `${formatNombrePersona(s.apellidos, s.nombres)} — DNI: ${s.dni} | Nº ${s.nro_socio}`
     setSelectedLabel(label)
     setQuery('')
     setResults([])
@@ -110,7 +111,7 @@ export default function SocioSearch({ value, onChange }: Props) {
                   onMouseDown={() => select(s)}
                   className="px-4 py-2.5 cursor-pointer hover:bg-blue-50 transition-colors"
                 >
-                  <p className="text-sm font-medium text-gray-800">{s.apellidos}, {s.nombres}</p>
+                  <p className="text-sm font-medium text-gray-800">{formatNombrePersona(s.apellidos, s.nombres)}</p>
                   <p className="text-xs text-gray-400 mt-0.5">DNI: {s.dni} · Nº Socio: {s.nro_socio}</p>
                 </li>
               ))}

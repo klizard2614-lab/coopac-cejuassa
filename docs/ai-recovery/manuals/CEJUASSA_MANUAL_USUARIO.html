@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manual de Usuario — COOPAC CEJUASSA</title>
+<style>
+  :root {
+    --navy: #1E3A5F;
+    --blue: #1A56DB;
+    --bg: #F8FAFC;
+    --border: #E2E8F0;
+    --text: #1E293B;
+    --muted: #64748B;
+    --warn-bg: #FEF3C7;
+    --warn-border: #F59E0B;
+    --warn-text: #92400E;
+    --info-bg: #EFF6FF;
+    --info-border: #3B82F6;
+    --info-text: #1E40AF;
+    --ok-bg: #F0FDF4;
+    --ok-border: #22C55E;
+    --ok-text: #166534;
+    --danger-bg: #FEF2F2;
+    --danger-border: #EF4444;
+    --danger-text: #991B1B;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+
+  /* ── Portada ── */
+  .cover {
+    background: linear-gradient(135deg, var(--navy) 0%, #2563EB 100%);
+    color: white;
+    padding: 80px 60px;
+    min-height: 280px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .cover h1 { font-size: 2.4rem; font-weight: 700; letter-spacing: -0.02em; }
+  .cover .subtitle { font-size: 1.1rem; opacity: 0.8; margin-top: 8px; }
+  .cover .meta { margin-top: 32px; font-size: 0.85rem; opacity: 0.65; display: flex; gap: 32px; }
+
+  /* ── Layout ── */
+  .container { max-width: 960px; margin: 0 auto; padding: 48px 32px; }
+
+  /* ── Índice ── */
+  .toc { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 28px 32px; margin-bottom: 48px; }
+  .toc h2 { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 16px; }
+  .toc ol { padding-left: 20px; }
+  .toc li { margin: 6px 0; }
+  .toc a { color: var(--blue); text-decoration: none; font-size: 0.95rem; }
+  .toc a:hover { text-decoration: underline; }
+
+  /* ── Secciones ── */
+  .section { margin-bottom: 64px; }
+  h2.sec-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--navy);
+    border-bottom: 3px solid var(--blue);
+    padding-bottom: 10px;
+    margin-bottom: 24px;
+    scroll-margin-top: 24px;
+  }
+  h3.sub-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--navy);
+    margin: 24px 0 10px;
+  }
+  p { margin-bottom: 12px; color: var(--text); }
+  ul, ol { padding-left: 22px; margin-bottom: 12px; }
+  li { margin: 5px 0; }
+
+  /* ── Tablas ── */
+  .table-wrap { overflow-x: auto; margin: 16px 0; border-radius: 10px; border: 1px solid var(--border); }
+  table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+  thead { background: var(--navy); color: white; }
+  th { padding: 11px 14px; text-align: left; font-weight: 600; white-space: nowrap; }
+  td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tr:nth-child(even) { background: #F8FAFC; }
+  .ok  { color: var(--ok-text);     background: var(--ok-bg);     border-radius: 4px; padding: 2px 8px; font-weight: 600; font-size: 0.8rem; }
+  .no  { color: var(--danger-text); background: var(--danger-bg); border-radius: 4px; padding: 2px 8px; font-weight: 600; font-size: 0.8rem; }
+  .par { color: #92400E;            background: #FEF3C7;           border-radius: 4px; padding: 2px 8px; font-weight: 600; font-size: 0.8rem; }
+
+  /* ── Alertas ── */
+  .alert { border-radius: 10px; padding: 14px 18px; margin: 16px 0; border-left: 4px solid; font-size: 0.92rem; }
+  .alert-warn   { background: var(--warn-bg);   border-color: var(--warn-border); color: var(--warn-text); }
+  .alert-info   { background: var(--info-bg);   border-color: var(--info-border); color: var(--info-text); }
+  .alert-ok     { background: var(--ok-bg);     border-color: var(--ok-border);   color: var(--ok-text); }
+  .alert-danger { background: var(--danger-bg); border-color: var(--danger-border); color: var(--danger-text); }
+  .alert strong { display: block; margin-bottom: 4px; }
+
+  /* ── Cards ── */
+  .card { background: white; border: 1px solid var(--border); border-radius: 10px; padding: 20px 24px; margin: 12px 0; }
+  .card h4 { color: var(--navy); font-size: 0.95rem; font-weight: 600; margin-bottom: 8px; }
+
+  /* ── Flujo ── */
+  .flow { display: flex; flex-direction: column; gap: 0; }
+  .flow-step { display: flex; gap: 16px; align-items: flex-start; padding: 14px 0; border-bottom: 1px solid var(--border); }
+  .flow-step:last-child { border-bottom: none; }
+  .step-num { background: var(--blue); color: white; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; flex-shrink: 0; }
+  .step-body h4 { font-weight: 600; color: var(--navy); margin-bottom: 4px; }
+  .step-body p { margin: 0; font-size: 0.9rem; color: var(--muted); }
+
+  /* ── Checklist ── */
+  .checklist { list-style: none; padding: 0; }
+  .checklist li { padding: 8px 0 8px 32px; position: relative; border-bottom: 1px solid var(--border); font-size: 0.93rem; }
+  .checklist li:last-child { border-bottom: none; }
+  .checklist li::before { content: '☐'; position: absolute; left: 0; font-size: 1.1rem; color: var(--blue); }
+
+  /* ── Footer ── */
+  footer { text-align: center; color: var(--muted); font-size: 0.8rem; padding: 32px; border-top: 1px solid var(--border); margin-top: 48px; }
+
+  @media print {
+    .cover { min-height: 200px; padding: 40px; }
+    .container { padding: 24px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════ PORTADA ══════════════════════════════════════════════ -->
+<div class="cover">
+  <h1>Manual de Usuario</h1>
+  <div class="subtitle">COOPAC CEJUASSA — Sistema de Gestión Cooperativa</div>
+  <div class="meta">
+    <span>Versión: MVP 1.0</span>
+    <span>Fecha: Junio 2026</span>
+    <span>Estado: Revisable — No enviar a SBS sin validación interna previa</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════ CONTENIDO ══════════════════════════════════════════════ -->
+<div class="container">
+
+  <!-- ÍNDICE -->
+  <nav class="toc">
+    <h2>Índice de contenidos</h2>
+    <ol>
+      <li><a href="#intro">Introducción</a></li>
+      <li><a href="#flujo">Flujo general de trabajo recomendado</a></li>
+      <li><a href="#dashboard">Módulo Dashboard</a></li>
+      <li><a href="#socios">Módulo Socios</a></li>
+      <li><a href="#creditos">Módulo Créditos</a></li>
+      <li><a href="#pagos">Módulo Pagos</a></li>
+      <li><a href="#aportes">Módulo Aportes</a></li>
+      <li><a href="#egresos">Módulo Egresos</a></li>
+      <li><a href="#convenios">Módulo Convenios</a></li>
+      <li><a href="#usuarios">Módulo Usuarios</a></li>
+      <li><a href="#config">Módulo Configuración</a></li>
+      <li><a href="#reportes">Reportes</a></li>
+      <li><a href="#bdcc">BDCC SBS</a></li>
+      <li><a href="#roles">Matriz de roles y permisos</a></li>
+      <li><a href="#errores">Errores comunes y solución</a></li>
+      <li><a href="#checklist">Checklist diario de uso</a></li>
+    </ol>
+  </nav>
+
+  <!-- ══════════ 1. INTRODUCCIÓN ══════════ -->
+  <section class="section" id="intro">
+    <h2 class="sec-title">1. Introducción</h2>
+
+    <p>La aplicación <strong>CEJUASSA</strong> es el sistema de gestión interna de la Cooperativa de Ahorro y Crédito COOPAC CEJUASSA (código SBS <strong>01270</strong>). Permite administrar socios, créditos, pagos, aportes, egresos y generar los reportes regulatorios exigidos por la SBS del Perú.</p>
+
+    <h3 class="sub-title">¿Para qué sirve?</h3>
+    <ul>
+      <li>Registrar y gestionar socios activos de la cooperativa.</li>
+      <li>Crear y seguir créditos con cronograma de pagos automático.</li>
+      <li>Registrar pagos de cuotas, aportes de socios y egresos operativos.</li>
+      <li>Generar reportes de cartera, mora, provisiones y Anexo 6 SBS.</li>
+      <li>Generar los archivos TXT para la BDCC (Base de Datos de Crédito Consolidada) requeridos por la SBS.</li>
+    </ul>
+
+    <h3 class="sub-title">Módulos disponibles</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Módulo</th><th>Función principal</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Dashboard</strong></td><td>Resumen ejecutivo de cartera, mora y provisiones</td></tr>
+          <tr><td><strong>Socios</strong></td><td>Registro y gestión de socios</td></tr>
+          <tr><td><strong>Créditos</strong></td><td>Gestión de préstamos y cronograma de cuotas</td></tr>
+          <tr><td><strong>Pagos</strong></td><td>Registro de recibos de pago y cuotas</td></tr>
+          <tr><td><strong>Aportes</strong></td><td>Historial de aportes de socios</td></tr>
+          <tr><td><strong>Egresos</strong></td><td>Registro de gastos operativos</td></tr>
+          <tr><td><strong>Convenios</strong></td><td>Gestión de convenios con empleadores</td></tr>
+          <tr><td><strong>Cartera</strong></td><td>Clasificación SBS de créditos vigentes</td></tr>
+          <tr><td><strong>Mora</strong></td><td>Lista de créditos vencidos con días de atraso</td></tr>
+          <tr><td><strong>Reportes</strong></td><td>Anexo 6, BDCC SBS, aportes, caja</td></tr>
+          <tr><td><strong>Usuarios</strong></td><td>Administración de accesos (solo Admin)</td></tr>
+          <tr><td><strong>Configuración</strong></td><td>Datos de la cooperativa y tasas de provisión</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="sub-title">Cosas que aún requieren revisión interna</h3>
+    <div class="alert alert-warn">
+      <strong>⚠ Pendientes antes del envío oficial a SBS (fecha límite: 20/07/2026)</strong>
+      <ul style="margin-top:8px; padding-left:20px;">
+        <li>Confirmar con <strong>Créditos</strong>: tasa TPINT (¿nominal anual o TEA?), códigos exactos TIPCRED/SUBTIPCRED según catálogo SBS.</li>
+        <li>Confirmar con <strong>Contabilidad</strong>: cuentas CCVE (capital vencido) y CCJU (capital judicial).</li>
+        <li>Ingresar con <strong>Tesorería</strong>: género y estado civil de todos los socios en el módulo Socios.</li>
+        <li>Módulo de créditos cancelados para BD02-B y BD04 — pendiente de implementación.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ══════════ 2. FLUJO GENERAL ══════════ -->
+  <section class="section" id="flujo">
+    <h2 class="sec-title">2. Flujo general de trabajo recomendado</h2>
+    <p>Siga este orden para garantizar que los datos sean consistentes y los reportes sean correctos.</p>
+
+    <div class="card">
+      <div class="flow">
+        <div class="flow-step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <h4>Configuración inicial</h4>
+            <p>Ir a <em>Configuración</em> y verificar: código COOPAC (01270), nombre, RUC, tasas de provisión SBS. Sin configuración correcta, los reportes de provisiones usarán valores por defecto.</p>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <h4>Registro de socios</h4>
+            <p>Ir a <em>Socios → Nuevo Socio</em>. Completar DNI, nombres, apellidos, fecha de nacimiento, dirección. <strong>Obligatorio para BDCC SBS</strong>: ingresar género y estado civil.</p>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <h4>Registro de créditos</h4>
+            <p>Ir a <em>Créditos → Nuevo Crédito</em>. Seleccionar socio, ingresar monto, tasa, plazo. Completar campos SBS: número de expediente, tipo crédito SBS, cuenta contable BD01, trámite, aporte descontado.</p>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <h4>Generación de cronograma</h4>
+            <p>El cronograma se genera automáticamente al crear el crédito (sistema francés — cuota fija). No requiere acción adicional.</p>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="step-num">5</div>
+          <div class="step-body">
+            <h4>Registro de pagos</h4>
+            <p>Ir a <em>Pagos → Registrar Pago</em>. Seleccionar socio y crédito. Ingresar montos de capital, interés, FPS, aportes. El sistema actualiza el cronograma y el saldo capital automáticamente.</p>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="step-num">6</div>
+          <div class="step-body">
+            <h4>Registro de aportes</h4>
+            <p>Los aportes se registran dentro del formulario de pagos (campo "Monto Aporte"). No hay un formulario separado de aportes — el historial se ve en el módulo <em>Aportes</em>.</p>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="step-num">7</div>
+          <div class="step-body">
+            <h4>Registro de egresos</h4>
+            <p>Ir a <em>Egresos</em>. Registrar gastos operativos con fecha, tipo, monto, beneficiario y descripción. Solo roles Admin y Tesorería pueden crear/editar/eliminar egresos.</p>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="step-num">8</div>
+          <div class="step-body">
+            <h4>Convenios</h4>
+            <p>Los convenios vinculan socios a empleadores para pagos por planilla. Revisar periódicamente que los socios estén correctamente asignados a su convenio.</p>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="step-num">9</div>
+          <div class="step-body">
+            <h4>Reportes internos</h4>
+            <p>Ir a <em>Reportes</em> para generar: Cartera, Aportes, Caja. Revisar el Dashboard para el resumen de provisiones.</p>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="step-num">10</div>
+          <div class="step-body">
+            <h4>Anexo 6 SBS</h4>
+            <p>Ir a <em>Reportes → Anexo 6</em>. Seleccionar período. Verificar que las tasas de provisión vengan de Configuración (debe aparecer sin banner de advertencia amarillo). Exportar Excel.</p>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="step-num">11</div>
+          <div class="step-body">
+            <h4>BDCC SBS</h4>
+            <p>Ir a <em>Reportes → BDCC SBS</em>. Seleccionar período, descargar archivos TXT: BD01, BD02-A. BD03A y BD03B solo incluyen encabezado (sin garantías). <strong>Revisar internamente fila por fila antes del envío oficial.</strong></p>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="step-num">12</div>
+          <div class="step-body">
+            <h4>Revisión final antes de enviar información</h4>
+            <p>Verificar que todos los socios tengan género y estado civil. Confirmar tasas TPINT y códigos TIPCRED/SUBTIPCRED. Revisar advertencias en la pantalla BDCC.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ 3. DASHBOARD ══════════ -->
+  <section class="section" id="dashboard">
+    <h2 class="sec-title">3. Módulo Dashboard</h2>
+    <p>El <strong>Dashboard</strong> es la pantalla principal del sistema. Muestra un resumen ejecutivo del estado financiero de la cooperativa.</p>
+
+    <h3 class="sub-title">¿Qué información muestra?</h3>
+    <ul>
+      <li><strong>Cartera total vigente</strong>: suma de saldo capital de todos los créditos vigentes.</li>
+      <li><strong>Número de socios activos</strong> y créditos vigentes.</li>
+      <li><strong>Mora total</strong>: suma de cuotas vencidas no pagadas.</li>
+      <li><strong>Provisiones requeridas</strong>: calculadas por clasificación SBS (Normal, CPP, Deficiente, Dudoso, Pérdida) usando las tasas de la tabla Configuración.</li>
+      <li><strong>Gráficos</strong> de distribución de cartera por clasificación.</li>
+    </ul>
+
+    <h3 class="sub-title">Qué debe revisar el usuario</h3>
+    <div class="alert alert-warn">
+      <strong>⚠ Si aparece un banner amarillo en el Dashboard</strong>
+      Significa que las tasas de provisión no se pudieron leer desde Configuración. El sistema usa valores SBS por defecto pero puede haber diferencias con las tasas propias de la cooperativa. Ir a <em>Configuración</em> para verificar.
+    </div>
+
+    <div class="alert alert-info">
+      <strong>ℹ Clasificación de mora utilizada</strong>
+      Normal (0–8 días), CPP (9–30 días), Deficiente (31–60 días), Dudoso (61–120 días), Pérdida (más de 120 días). Los días de mora se cuentan desde la cuota vencida más antigua pendiente.
+    </div>
+  </section>
+
+  <!-- ══════════ 4. SOCIOS ══════════ -->
+  <section class="section" id="socios">
+    <h2 class="sec-title">4. Módulo Socios</h2>
+    <p>Gestión completa del padrón de socios de la cooperativa.</p>
+
+    <h3 class="sub-title">Crear socio</h3>
+    <ol>
+      <li>Ir a <em>Socios → Nuevo Socio</em>.</li>
+      <li>Completar los campos obligatorios: número de socio, DNI, apellidos, nombres.</li>
+      <li>Agregar fecha de nacimiento, dirección, estado.</li>
+      <li>Si el socio pertenece a un convenio, seleccionar el convenio correspondiente.</li>
+      <li><strong>Para BDCC SBS</strong>: ingresar <em>género</em> (Masculino/Femenino) y <em>estado civil</em>. Estos campos son obligatorios para la generación de BD01.</li>
+    </ol>
+
+    <h3 class="sub-title">Editar socio</h3>
+    <p>Ir a la lista de socios y hacer clic en el botón <em>Editar</em> del socio correspondiente. Se puede modificar cualquier campo, incluyendo género y estado civil.</p>
+
+    <h3 class="sub-title">Campos principales</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Campo</th><th>Descripción</th><th>Requerido para SBS</th></tr></thead>
+        <tbody>
+          <tr><td>Nro. Socio</td><td>Número interno de socio</td><td>—</td></tr>
+          <tr><td>DNI</td><td>Documento de identidad</td><td>✅ BD01</td></tr>
+          <tr><td>Apellidos y Nombres</td><td>Nombre completo</td><td>✅ BD01</td></tr>
+          <tr><td>Fecha de nacimiento</td><td>Para cálculos de edad</td><td>—</td></tr>
+          <tr><td>Dirección</td><td>Domicilio del socio</td><td>—</td></tr>
+          <tr><td>Estado</td><td>Activo / Inactivo</td><td>—</td></tr>
+          <tr><td>Convenio</td><td>Vínculo laboral para pagos por planilla</td><td>—</td></tr>
+          <tr><td><strong>Género</strong></td><td>M = Masculino, F = Femenino</td><td>✅ BD01 (campo SEXO)</td></tr>
+          <tr><td><strong>Estado civil</strong></td><td>Soltero, Casado, Divorciado, Viudo</td><td>✅ BD01 (campo ESTCIV)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="alert alert-warn">
+      <strong>⚠ Género y estado civil son críticos para el reporte BDCC BD01</strong>
+      Si un socio no tiene género o estado civil registrado, el campo aparecerá vacío en el archivo TXT enviado a la SBS. Completar estos datos antes de generar la BDCC.
+    </div>
+
+    <h3 class="sub-title">Permisos por rol</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Acción</th><th>Admin</th><th>Tesorería</th><th>Créditos</th><th>Contabilidad</th></tr></thead>
+        <tbody>
+          <tr><td>Ver lista de socios</td><td><span class="ok">✅ Sí</span></td><td><span class="ok">✅ Sí</span></td><td><span class="ok">✅ Sí</span></td><td><span class="ok">✅ Sí</span></td></tr>
+          <tr><td>Crear socio</td><td><span class="ok">✅ Sí</span></td><td><span class="no">❌ No</span></td><td><span class="ok">✅ Sí</span></td><td><span class="no">❌ No</span></td></tr>
+          <tr><td>Editar socio</td><td><span class="ok">✅ Sí</span></td><td><span class="no">❌ No</span></td><td><span class="ok">✅ Sí</span></td><td><span class="no">❌ No</span></td></tr>
+          <tr><td>Generar ficha PDF</td><td><span class="ok">✅ Sí</span></td><td><span class="ok">✅ Sí</span></td><td><span class="ok">✅ Sí</span></td><td><span class="ok">✅ Sí</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ══════════ 5. CRÉDITOS ══════════ -->
+  <section class="section" id="creditos">
+    <h2 class="sec-title">5. Módulo Créditos</h2>
+    <p>Gestión de préstamos otorgados a los socios. Incluye cronograma de cuotas automático.</p>
+
+    <h3 class="sub-title">Crear crédito</h3>
+    <ol>
+      <li>Ir a <em>Créditos → Nuevo Crédito</em>.</li>
+      <li>Seleccionar el socio.</li>
+      <li>Ingresar: Nro. Pagaré, fecha de desembolso, monto aprobado, monto girado neto, descuentos.</li>
+      <li>Configurar: tasa de interés anual (%), plazo en meses, tipo de crédito.</li>
+      <li>Completar los <strong>campos SBS/BDCC</strong> (ver tabla abajo).</li>
+      <li>El cronograma de cuotas se genera automáticamente al guardar (sistema francés — cuota mensual fija).</li>
+    </ol>
+
+    <h3 class="sub-title">Campos SBS/BDCC en créditos</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Campo</th><th>Descripción</th><th>Requerido para</th></tr></thead>
+        <tbody>
+          <tr><td>Nro. Expediente</td><td>Número interno de expediente del crédito</td><td>BD01</td></tr>
+          <tr><td>Tipo Crédito SBS</td><td>Clasificación SBS (ej. Consumo no revolvente). Código C19/C20 — confirmar con Créditos</td><td>BD01</td></tr>
+          <tr><td>Subtipo Crédito SBS</td><td>Subtipo según catálogo SBS</td><td>BD01</td></tr>
+          <tr><td>Cuenta Contable BD01</td><td>Cuenta de activo (candidata: 1411050604). Confirmar con Contabilidad</td><td>BD01</td></tr>
+          <tr><td>Aporte Descontado</td><td>Monto descontado del desembolso para aportes (aplica socios nuevos)</td><td>BD01</td></tr>
+          <tr><td>Trámite</td><td>Tipo de trámite del crédito</td><td>BD01</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="sub-title">Saldo capital</h3>
+    <p>El saldo capital se actualiza automáticamente en cada pago de capital. Es la base para la clasificación SBS en Cartera y para el Anexo 6.</p>
+
+    <div class="alert alert-info">
+      <strong>ℹ Cronograma de cuotas</strong>
+      El cronograma usa el <strong>sistema francés</strong> (cuota mensual fija). La última cuota absorbe el desfase de redondeo. Las cuotas se marcan como: pendiente, parcial, vencida o pagada.
+    </div>
+
+    <h3 class="sub-title">Permisos por rol</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Acción</th><th>Admin</th><th>Tesorería</th><th>Créditos</th><th>Contabilidad</th></tr></thead>
+        <tbody>
+          <tr><td>Ver lista de créditos</td><td><span class="ok">✅ Sí</span></td><td><span class="ok">✅ Sí</span></td><td><span class="ok">✅ Sí</span></td><td><span class="ok">✅ Sí</span></td></tr>
+          <tr><td>Ver cronograma</td><td><span class="ok">✅ Sí</span></td><td><span class="ok">✅ Sí</span></td><td><span class="ok">✅ Sí</span></td><td><span class="ok">✅ Sí</span></td></tr>
+          <tr><td>Crear crédito</td><td><span class="ok">✅ Sí</span></td><td><span class="no">❌ No</span></td><td><span class="ok">✅ Sí</span></td><td><span class="no">❌ No</span></td></tr>
+          <tr><td>Editar crédito</td><td><span class="ok">✅ Sí</span></td><td><span class="no">❌ No</span></td><td><span class="ok">✅ Sí</span></td><td><span class="no">❌ No</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ══════════ 6. PAGOS ══════════ -->
+  <section class="section" id="pagos">
+    <h2 class="sec-title">6. Módulo Pagos</h2>
+    <p>Registro de recibos de pago de cuotas, aportes y otros conceptos.</p>
+
+    <h3 class="sub-title">Registrar pago</h3>
+    <ol>
+      <li>Ir a <em>Pagos → Registrar Pago</em>.</li>
+      <li>Seleccionar el socio y el crédito asociado.</li>
+      <li>Seleccionar el período (YYYY-MM) y canal de pago.</li>
+      <li>Ingresar montos: capital, interés, FPS, aporte (opcional), otros.</li>
+      <li>Seleccionar el tipo de pago: <strong>A</strong> (Abono normal) o <strong>K</strong> (Cancelación total).</li>
+      <li>Guardar. El sistema actualizará el cronograma y el saldo capital automáticamente.</li>
+    </ol>
+
+    <h3 class="sub-title">Pagos parciales</h3>
+    <p>Si el monto pagado no cubre la cuota completa, la cuota pasa a estado <strong>"parcial"</strong>. En el siguiente pago, el sistema acumula los montos: capital_pagado + interés_pagado hasta completar la cuota.</p>
+
+    <h3 class="sub-title">Tipo de pago A/K</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Tipo</th><th>Significado</th><th>Uso</th></tr></thead>
+        <tbody>
+          <tr><td><strong>A</strong></td><td>Abono — pago parcial o de cuota</td><td>Pagos normales mensuales</td></tr>
+          <tr><td><strong>K</strong></td><td>Cancelación — pago total del crédito</td><td>Cuando el socio cancela el préstamo completo</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="alert alert-warn">
+      <strong>⚠ Cuotas vencidas</strong>
+      Una cuota se considera vencida si: tiene estado "vencida" O si su fecha de vencimiento ya pasó y está en estado pendiente o parcial. El sistema aplica el pago a la cuota más antigua pendiente primero.
+    </div>
+
+    <h3 class="sub-title">Permisos por rol</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Acción</th><th>Admin</th><th>Tesorería</th><th>Créditos</th><th>Contabilidad</th></tr></thead>
+        <tbody>
+          <tr><td>Ver lista de pagos</td><td><span class="ok">✅ Sí</span></td><td><span class="ok">✅ Sí</span></td><td><span class="ok">✅ Sí</span></td><td><span class="ok">✅ Sí</span></td></tr>
+          <tr><td>Registrar pago</td><td><span class="ok">✅ Sí</span></td><td><span class="ok">✅ Sí</span></td><td><span class="no">❌ No</span></td><td><span class="no">❌ No</span></td></tr>
+          <tr><td>Ver/imprimir recibo PDF</td><td><span class="ok">✅ Sí</span></td><td><span class="ok">✅ Sí</span></td><td><span class="ok">✅ Sí</span></td><td><span class="ok">✅ Sí</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ══════════ 7. APORTES ══════════ -->
+  <section class="section" id="aportes">
+    <h2 class="sec-title">7. Módulo Aportes</h2>
+    <p>Historial de aportes (ahorros) de cada socio a la cooperativa.</p>
+
+    <h3 class="sub-title">¿Cómo se registran los aportes?</h3>
+    <p>Los aportes <strong>no se registran directamente</strong> en este módulo. Se registran como parte del formulario de Pagos (campo "Monto Aporte"). Al guardar un pago con monto de aporte mayor a cero, el sistema crea automáticamente un registro en la tabla de aportes.</p>
+
+    <h3 class="sub-title">¿Qué muestra el módulo Aportes?</h3>
+    <ul>
+      <li>Historial de aportes por socio con saldo anterior y nuevo.</li>
+      <li>Fecha, tipo, monto y observación de cada aporte.</li>
+      <li>Botón "Registrar aporte vía pago" que redirige al formulario de Pagos (visible para Admin y Tesorería).</li>
+    </ul>
+
+    <div class="alert alert-info">
+      <strong>ℹ Relación con socios</strong>
+      Cada aporte está vinculado a un socio y a un recibo de pago. El saldo de aportes del socio se actualiza acumulativamente.
+    </div>
+
+    <h3 class="sub-title">Permisos por rol</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Acción</th><th>Admin</th><th>Tesorería</th><th>Créditos</th><th>Contabilidad</th></tr></thead>
+        <tbody>
+          <tr><td>Ver historial de aportes</td><td><span class="ok">✅ Sí</span></td><td><span class="ok">✅ Sí</span></td><td><span class="ok">✅ Sí</span></td><td><span class="ok">✅ Sí</span></td></tr>
+          <tr><td>Ver botón "Registrar aporte"</td><td><span class="ok">✅ Sí</span></td><td><span class="ok">✅ Sí</span></td><td><span class="no">❌ No</span></td><td><span class="no">❌ No</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ══════════ 8. EGRESOS ══════════ -->
+  <section class="section" id="egresos">
+    <h2 class="sec-title">8. Módulo Egresos</h2>
+    <p>Registro de gastos operativos de la cooperativa.</p>
+
+    <h3 class="sub-title">Crear egreso</h3>
+    <ol>
+      <li>Ir a <em>Egresos</em>.</li>
+      <li>Hacer clic en "Nuevo Egreso".</li>
+      <li>Completar: fecha, tipo de egreso, monto (S/), beneficiario y descripción.</li>
+      <li>Opcionalmente vincular a un socio.</li>
+    </ol>
+
+    <h3 class="sub-title">Editar y eliminar egresos</h3>
+    <p>Usar los botones de acción en la lista de egresos. Solo roles con permiso pueden ver estos botones.</p>
+
+    <h3 class="sub-title">Permisos por rol</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Acción</th><th>Admin</th><th>Tesorería</th><th>Créditos</th><th>Contabilidad</th></tr></thead>
+        <tbody>
+          <tr><td>Ver módulo en sidebar</td><td><span class="ok">✅ Sí</span></td><td><span class="ok">✅ Sí</span></td><td><span class="no">❌ No</span></td><td><span class="ok">✅ Sí</span></td></tr>
+          <tr><td>Ver lista de egresos</td><td><span class="ok">✅ Sí</span></td><td><span class="ok">✅ Sí</span></td><td><span class="no">❌ No</span></td><td><span class="ok">✅ Sí</span></td></tr>
+          <tr><td>Crear / Editar / Eliminar</td><td><span class="ok">✅ Sí</span></td><td><span class="ok">✅ Sí</span></td><td><span class="no">❌ No</span></td><td><span class="no">❌ Solo ver</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ══════════ 9. CONVENIOS ══════════ -->
+  <section class="section" id="convenios">
+    <h2 class="sec-title">9. Módulo Convenios</h2>
+    <p>Gestión de convenios con empleadores para pagos por planilla.</p>
+
+    <h3 class="sub-title">¿Para qué sirve?</h3>
+    <p>Permite registrar instituciones o empresas con las que la cooperativa tiene convenios de descuento por planilla. Los socios vinculados a un convenio tienen su crédito descontado directamente de su sueldo.</p>
+
+    <h3 class="sub-title">Qué debe revisar el usuario</h3>
+    <ul>
+      <li>Verificar que los socios con pago por planilla estén correctamente vinculados a su convenio (campo "Convenio" en el módulo Socios).</li>
+      <li>El módulo muestra un resumen de pagos recibidos por período y convenio.</li>
+    </ul>
+
+    <div class="alert alert-info">
+      <strong>ℹ Disponibilidad por rol</strong>
+      El rol <strong>Contabilidad</strong> no ve el módulo Convenios en el menú lateral. Los demás roles sí tienen acceso.
+    </div>
+  </section>
+
+  <!-- ══════════ 10. USUARIOS ══════════ -->
+  <section class="section" id="usuarios">
+    <h2 class="sec-title">10. Módulo Usuarios</h2>
+    <p>Administración de accesos al sistema. <strong>Solo el rol Admin puede acceder a este módulo.</strong></p>
+
+    <h3 class="sub-title">Invitar nuevo usuario</h3>
+    <ol>
+      <li>Ir a <em>Usuarios</em>.</li>
+      <li>Ingresar el correo electrónico del nuevo usuario.</li>
+      <li>Seleccionar el rol: Admin, Tesorería, Créditos o Contabilidad.</li>
+      <li>El sistema envía una invitación por correo. El usuario debe aceptarla y crear su contraseña.</li>
+    </ol>
+
+    <h3 class="sub-title">Cambio de rol</h3>
+    <p>Ir a la lista de usuarios, hacer clic en el usuario y cambiar el rol desde el menú desplegable.</p>
+
+    <div class="alert alert-danger">
+      <strong>🚨 Advertencia de seguridad</strong>
+      <ul style="margin-top:8px; padding-left:20px;">
+        <li>Solo el administrador principal debe tener acceso a la gestión de usuarios.</li>
+        <li>No asignar el rol Admin a usuarios sin necesidad — el Admin tiene acceso a todas las funciones, incluyendo Configuración y la capacidad de modificar cualquier registro.</li>
+        <li>Si un usuario ya no trabaja en la cooperativa, desactivar su cuenta inmediatamente.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ══════════ 11. CONFIGURACIÓN ══════════ -->
+  <section class="section" id="config">
+    <h2 class="sec-title">11. Módulo Configuración</h2>
+    <p>Datos base de la cooperativa y tasas de provisión. <strong>Solo el rol Admin puede acceder.</strong></p>
+
+    <h3 class="sub-title">Datos configurables</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Campo</th><th>Descripción</th><th>Valor actual</th></tr></thead>
+        <tbody>
+          <tr><td>Nombre de cooperativa</td><td>Nombre oficial</td><td>COOPAC CEJUASSA</td></tr>
+          <tr><td>Código COOPAC</td><td>Código SBS de 5 dígitos</td><td>01270</td></tr>
+          <tr><td>RUC</td><td>Registro Único de Contribuyentes</td><td>—</td></tr>
+          <tr><td>Dirección / Teléfono</td><td>Datos de contacto</td><td>—</td></tr>
+          <tr><td>Tasa de interés anual</td><td>Tasa por defecto para nuevos créditos</td><td>—</td></tr>
+          <tr><td>Tasa FPS</td><td>Fondo de Provisión Social</td><td>—</td></tr>
+          <tr><td><strong>Provisión Normal</strong></td><td>Tasa SBS — créditos 0–8 días mora</td><td>1%</td></tr>
+          <tr><td><strong>Provisión CPP</strong></td><td>Tasa SBS — créditos 9–30 días mora</td><td>5%</td></tr>
+          <tr><td><strong>Provisión Deficiente</strong></td><td>Tasa SBS — créditos 31–60 días</td><td>25%</td></tr>
+          <tr><td><strong>Provisión Dudoso</strong></td><td>Tasa SBS — créditos 61–120 días</td><td>60%</td></tr>
+          <tr><td><strong>Provisión Pérdida</strong></td><td>Tasa SBS — créditos más de 120 días</td><td>100%</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="alert alert-warn">
+      <strong>⚠ Tasas de provisión</strong>
+      Si las tasas de provisión no están configuradas correctamente, el Anexo 6, el Dashboard y el módulo Cartera mostrarán un banner de advertencia y usarán los valores SBS por defecto. Siempre verificar estas tasas antes de generar reportes regulatorios.
+    </div>
+  </section>
+
+  <!-- ══════════ 12. REPORTES ══════════ -->
+  <section class="section" id="reportes">
+    <h2 class="sec-title">12. Reportes</h2>
+    <p>El módulo Reportes centraliza todos los informes exportables del sistema.</p>
+
+    <h3 class="sub-title">Cartera</h3>
+    <p>Clasificación SBS de todos los créditos vigentes. Muestra: saldo capital, días de mora, clasificación (Normal/CPP/Deficiente/Dudoso/Pérdida) y provisión requerida por deudor. Exportable a Excel.</p>
+
+    <h3 class="sub-title">Dashboard / Reportes</h3>
+    <p>Resumen de aportes por período, movimiento de caja (ingresos vs. egresos) y estadísticas generales. Exportable a Excel.</p>
+
+    <h3 class="sub-title">Anexo 6 — Reporte SBS</h3>
+    <p>Reporte regulatorio de 60 columnas requerido por la SBS. Incluye todos los créditos vigentes con clasificación, provisiones requeridas y provisiones constituidas.</p>
+
+    <div class="alert alert-info">
+      <strong>ℹ Provisiones Constituidas (columna C37)</strong>
+      Las provisiones constituidas se calculan igual a las provisiones requeridas (C37 = C36) por criterio confirmado por Contabilidad. Esto refleja la política de provisión de la cooperativa donde cada deudor tiene asignadas las provisiones según su clasificación SBS. Este criterio fue validado internamente en junio 2026.
+    </div>
+
+    <h3 class="sub-title">Provisiones requeridas</h3>
+    <p>Calculadas multiplicando el saldo capital de cada deudor por la tasa correspondiente a su clasificación. Las tasas se leen desde la tabla Configuración.</p>
+
+    <h3 class="sub-title">Exportar Anexo 6</h3>
+    <ol>
+      <li>Ir a <em>Reportes → Anexo 6</em>.</li>
+      <li>Seleccionar el período.</li>
+      <li>Hacer clic en "Generar".</li>
+      <li>Revisar el reporte en pantalla.</li>
+      <li>Hacer clic en "Exportar Excel".</li>
+    </ol>
+  </section>
+
+  <!-- ══════════ 13. BDCC SBS ══════════ -->
+  <section class="section" id="bdcc">
+    <h2 class="sec-title">13. BDCC SBS</h2>
+    <p>La <strong>BDCC (Base de Datos de Crédito Consolidada)</strong> es el sistema de reporte de créditos de la SBS. La cooperativa debe enviar archivos TXT mensualmente. La primera entrega es el <strong>20 de julio 2026</strong> (trimestres marzo y junio 2026).</p>
+
+    <h3 class="sub-title">¿Para qué sirve este módulo?</h3>
+    <p>Genera los archivos TXT que se envían a la SBS con información de créditos, deudores, garantías y cuotas. Los archivos tienen formato fijo con campos separados por tabuladores.</p>
+
+    <h3 class="sub-title">Archivos que genera el sistema (MVP)</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Archivo</th><th>Contenido</th><th>Estado</th></tr></thead>
+        <tbody>
+          <tr><td><strong>BD01</strong></td><td>Información de deudores y créditos vigentes (clasificación, provisiones, saldos)</td><td><span class="ok">✅ Disponible</span></td></tr>
+          <tr><td><strong>BD02-A</strong></td><td>Cuotas pagadas en el período seleccionado</td><td><span class="ok">✅ Disponible</span></td></tr>
+          <tr><td><strong>BD03A</strong></td><td>Garantías preferidas de primer rango — la cooperativa no tiene garantías: solo encabezado</td><td><span class="ok">✅ Disponible (encabezado)</span></td></tr>
+          <tr><td><strong>BD03B</strong></td><td>Garantías preferidas de segundo rango — igual que BD03A</td><td><span class="ok">✅ Disponible (encabezado)</span></td></tr>
+          <tr><td><strong>BD02-B</strong></td><td>Créditos cancelados en el período</td><td><span class="no">⏳ Pendiente</span></td></tr>
+          <tr><td><strong>BD04</strong></td><td>Historial de créditos cancelados</td><td><span class="no">⏳ Pendiente</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="sub-title">Cómo generar los archivos</h3>
+    <ol>
+      <li>Ir a <em>Reportes → BDCC SBS</em>.</li>
+      <li>Seleccionar el año y mes del período a reportar.</li>
+      <li>Hacer clic en el botón del archivo deseado (ej. "Descargar BD01").</li>
+      <li>El archivo se descarga con el nombre <code>01270_BD01_YYYYMM.txt</code>.</li>
+      <li>Abrir el archivo y revisar fila por fila antes de enviar a la SBS.</li>
+    </ol>
+
+    <h3 class="sub-title">Advertencias regulatorias activas</h3>
+    <div class="alert alert-warn">
+      <strong>⚠ Los siguientes datos están pendientes de validación antes del envío oficial:</strong>
+      <ul style="margin-top:8px; padding-left:20px;">
+        <li><strong>TPINT</strong> (tasa de interés): ¿Es la tasa nominal anual o la TEA? Confirmar con el área de Créditos.</li>
+        <li><strong>TIPCRED / SUBTIPCRED</strong>: Confirmar los códigos exactos según el catálogo SBS para "Consumo no revolvente".</li>
+        <li><strong>CCVE / CCJU</strong>: Cuentas contables para capital vencido y capital judicial. Confirmar con Contabilidad.</li>
+        <li><strong>SEXO / ESTCIV</strong>: Género y estado civil de socios. Completar en el módulo Socios antes de generar BD01.</li>
+      </ul>
+    </div>
+
+    <div class="alert alert-danger">
+      <strong>🚨 El TXT generado es un MVP revisable — NO enviar a SBS sin validación interna previa</strong>
+      Revisar cada archivo con el Oficio SBS N°32791-2026-SBS original. Validar columnas, formatos y longitudes de campo antes de la entrega oficial.
+    </div>
+
+    <h3 class="sub-title">BD02-B y BD04 — pendientes</h3>
+    <p>Estos archivos requieren información de créditos cancelados. La cooperativa aún no tiene módulo para registrar cancelaciones de crédito. Esta funcionalidad se implementará como un subproyecto separado después de la primera entrega.</p>
+  </section>
+
+  <!-- ══════════ 14. MATRIZ DE ROLES ══════════ -->
+  <section class="section" id="roles">
+    <h2 class="sec-title">14. Matriz de roles y permisos</h2>
+    <p>La siguiente tabla muestra qué puede hacer cada rol en cada módulo. Los permisos se aplican tanto en el menú lateral como dentro de cada pantalla.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Módulo / Acción</th>
+            <th>Admin</th>
+            <th>Tesorería</th>
+            <th>Créditos</th>
+            <th>Contabilidad</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td colspan="5" style="background:#EFF6FF; font-weight:600; color:#1E40AF; padding:8px 14px;">ACCESO AL MÓDULO (visible en sidebar)</td></tr>
+          <tr><td>Dashboard</td><td><span class="ok">✅</span></td><td><span class="ok">✅</span></td><td><span class="ok">✅</span></td><td><span class="ok">✅</span></td></tr>
+          <tr><td>Socios</td><td><span class="ok">✅</span></td><td><span class="ok">✅</span></td><td><span class="ok">✅</span></td><td><span class="ok">✅</span></td></tr>
+          <tr><td>Créditos</td><td><span class="ok">✅</span></td><td><span class="ok">✅</span></td><td><span class="ok">✅</span></td><td><span class="ok">✅</span></td></tr>
+          <tr><td>Pagos</td><td><span class="ok">✅</span></td><td><span class="ok">✅</span></td><td><span class="ok">✅</span></td><td><span class="ok">✅</span></td></tr>
+          <tr><td>Aportes</td><td><span class="ok">✅</span></td><td><span class="ok">✅</span></td><td><span class="ok">✅</span></td><td><span class="ok">✅</span></td></tr>
+          <tr><td>Egresos</td><td><span class="ok">✅</span></td><td><span class="ok">✅</span></td><td><span class="no">❌ Oculto</span></td><td><span class="ok">✅</span></td></tr>
+          <tr><td>Convenios</td><td><span class="ok">✅</span></td><td><span class="ok">✅</span></td><td><span class="ok">✅</span></td><td><span class="no">❌ Oculto</span></td></tr>
+          <tr><td>Cartera</td><td><span class="ok">✅</span></td><td><span class="ok">✅</span></td><td><span class="ok">✅</span></td><td><span class="ok">✅</span></td></tr>
+          <tr><td>Mora</td><td><span class="ok">✅</span></td><td><span class="ok">✅</span></td><td><span class="ok">✅</span></td><td><span class="ok">✅</span></td></tr>
+          <tr><td>Reportes</td><td><span class="ok">✅</span></td><td><span class="ok">✅</span></td><td><span class="ok">✅</span></td><td><span class="ok">✅</span></td></tr>
+          <tr><td>Usuarios</td><td><span class="ok">✅</span></td><td><span class="no">❌ Oculto</span></td><td><span class="no">❌ Oculto</span></td><td><span class="no">❌ Oculto</span></td></tr>
+          <tr><td>Configuración</td><td><span class="ok">✅</span></td><td><span class="no">❌ Oculto</span></td><td><span class="no">❌ Oculto</span></td><td><span class="no">❌ Oculto</span></td></tr>
+
+          <tr><td colspan="5" style="background:#EFF6FF; font-weight:600; color:#1E40AF; padding:8px 14px;">SOCIOS — Acciones</td></tr>
+          <tr><td>Ver socios</td><td><span class="ok">✅</span></td><td><span class="ok">✅</span></td><td><span class="ok">✅</span></td><td><span class="ok">✅</span></td></tr>
+          <tr><td>Crear socio</td><td><span class="ok">✅</span></td><td><span class="no">❌</span></td><td><span class="ok">✅</span></td><td><span class="no">❌</span></td></tr>
+          <tr><td>Editar socio</td><td><span class="ok">✅</span></td><td><span class="no">❌</span></td><td><span class="ok">✅</span></td><td><span class="no">❌</span></td></tr>
+          <tr><td>Eliminar socio</td><td><span class="no">❌ No implementado</span></td><td><span class="no">❌</span></td><td><span class="no">❌</span></td><td><span class="no">❌</span></td></tr>
+          <tr><td>Exportar ficha PDF</td><td><span class="ok">✅</span></td><td><span class="ok">✅</span></td><td><span class="ok">✅</span></td><td><span class="ok">✅</span></td></tr>
+
+          <tr><td colspan="5" style="background:#EFF6FF; font-weight:600; color:#1E40AF; padding:8px 14px;">CRÉDITOS — Acciones</td></tr>
+          <tr><td>Ver créditos y cronograma</td><td><span class="ok">✅</span></td><td><span class="ok">✅</span></td><td><span class="ok">✅</span></td><td><span class="ok">✅</span></td></tr>
+          <tr><td>Crear crédito</td><td><span class="ok">✅</span></td><td><span class="no">❌</span></td><td><span class="ok">✅</span></td><td><span class="no">❌</span></td></tr>
+          <tr><td>Editar crédito</td><td><span class="ok">✅</span></td><td><span class="no">❌</span></td><td><span class="ok">✅</span></td><td><span class="no">❌</span></td></tr>
+
+          <tr><td colspan="5" style="background:#EFF6FF; font-weight:600; color:#1E40AF; padding:8px 14px;">PAGOS — Acciones</td></tr>
+          <tr><td>Ver pagos</td><td><span class="ok">✅</span></td><td><span class="ok">✅</span></td><td><span class="ok">✅</span></td><td><span class="ok">✅</span></td></tr>
+          <tr><td>Registrar pago</td><td><span class="ok">✅</span></td><td><span class="ok">✅</span></td><td><span class="no">❌</span></td><td><span class="no">❌</span></td></tr>
+          <tr><td>Ver recibo PDF</td><td><span class="ok">✅</span></td><td><span class="ok">✅</span></td><td><span class="ok">✅</span></td><td><span class="ok">✅</span></td></tr>
+
+          <tr><td colspan="5" style="background:#EFF6FF; font-weight:600; color:#1E40AF; padding:8px 14px;">EGRESOS — Acciones</td></tr>
+          <tr><td>Ver egresos</td><td><span class="ok">✅</span></td><td><span class="ok">✅</span></td><td><span class="no">❌ No accede</span></td><td><span class="ok">✅ Solo ver</span></td></tr>
+          <tr><td>Crear / Editar / Eliminar</td><td><span class="ok">✅</span></td><td><span class="ok">✅</span></td><td><span class="no">❌</span></td><td><span class="no">❌</span></td></tr>
+
+          <tr><td colspan="5" style="background:#EFF6FF; font-weight:600; color:#1E40AF; padding:8px 14px;">REPORTES — Acciones</td></tr>
+          <tr><td>Ver reportes</td><td><span class="ok">✅</span></td><td><span class="ok">✅</span></td><td><span class="ok">✅</span></td><td><span class="ok">✅</span></td></tr>
+          <tr><td>Exportar Excel (Anexo 6)</td><td><span class="ok">✅</span></td><td><span class="ok">✅</span></td><td><span class="ok">✅</span></td><td><span class="ok">✅</span></td></tr>
+          <tr><td>Descargar BDCC TXT</td><td><span class="ok">✅</span></td><td><span class="ok">✅</span></td><td><span class="ok">✅</span></td><td><span class="ok">✅</span></td></tr>
+
+          <tr><td colspan="5" style="background:#EFF6FF; font-weight:600; color:#1E40AF; padding:8px 14px;">USUARIOS Y CONFIGURACIÓN</td></tr>
+          <tr><td>Administrar usuarios</td><td><span class="ok">✅</span></td><td><span class="no">❌</span></td><td><span class="no">❌</span></td><td><span class="no">❌</span></td></tr>
+          <tr><td>Configuración del sistema</td><td><span class="ok">✅</span></td><td><span class="no">❌</span></td><td><span class="no">❌</span></td><td><span class="no">❌</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ══════════ 15. ERRORES COMUNES ══════════ -->
+  <section class="section" id="errores">
+    <h2 class="sec-title">15. Errores comunes y solución</h2>
+
+    <div class="card">
+      <h4>❓ No veo un botón (por ejemplo "Nuevo Socio")</h4>
+      <p>Su rol no tiene permiso para esa acción. Ver la Matriz de Roles (sección 14). Si necesita acceso, contactar al administrador para revisar su rol.</p>
+    </div>
+
+    <div class="card">
+      <h4>❓ No puedo crear un crédito — botón no aparece</h4>
+      <p>Solo los roles <strong>Admin</strong> y <strong>Créditos</strong> pueden crear créditos. Si su rol es Tesorería o Contabilidad, no verá el botón. Si su rol es Créditos y aun así no aparece, cerrar sesión y volver a entrar.</p>
+    </div>
+
+    <div class="card">
+      <h4>❓ No aparece el socio al buscar en el formulario de pago</h4>
+      <p>Verificar que el socio esté en estado "Activo" en el módulo Socios. El buscador puede distinguir mayúsculas — intentar con el DNI.</p>
+    </div>
+
+    <div class="card">
+      <h4>❓ No puedo registrar un pago</h4>
+      <p>Solo los roles <strong>Admin</strong> y <strong>Tesorería</strong> pueden registrar pagos. Si su rol es correcto y el botón no aparece, verificar que haya créditos vigentes para el socio seleccionado.</p>
+    </div>
+
+    <div class="card">
+      <h4>❓ En el archivo BDCC aparecen campos vacíos (SEXO, ESTCIV)</h4>
+      <p>El socio no tiene género o estado civil registrado. Ir a <em>Socios → Editar</em> y completar esos campos antes de volver a generar el archivo.</p>
+    </div>
+
+    <div class="card">
+      <h4>❓ El archivo TXT tiene advertencias regulatorias</h4>
+      <p>La pantalla BDCC muestra advertencias sobre campos pendientes de validación (TPINT, TIPCRED, CCVE/CCJU). Estas advertencias son informativas — el archivo se genera igual pero debe ser revisado antes del envío oficial a la SBS.</p>
+    </div>
+
+    <div class="card">
+      <h4>❓ BD02-B y BD04 aparecen como "pendientes" y no puedo descargarlos</h4>
+      <p>Estos archivos requieren información de créditos cancelados. Esta funcionalidad aún no está implementada y está planificada para una fase posterior. Por ahora, los botones están deshabilitados intencionalmente.</p>
+    </div>
+
+    <div class="card">
+      <h4>❓ Aparece banner amarillo en Dashboard o Reportes</h4>
+      <p>Las tasas de provisión no se pudieron leer desde Configuración. Ir a <em>Configuración</em> como administrador y verificar que las 5 tasas de provisión estén ingresadas correctamente.</p>
+    </div>
+  </section>
+
+  <!-- ══════════ 16. CHECKLIST DIARIO ══════════ -->
+  <section class="section" id="checklist">
+    <h2 class="sec-title">16. Checklist diario de uso</h2>
+
+    <h3 class="sub-title">Antes de cerrar el día</h3>
+    <ul class="checklist">
+      <li>Verificar que todos los pagos del día hayan sido registrados con fecha correcta.</li>
+      <li>Revisar que las cuotas pagadas hayan cambiado de estado (pendiente/vencida → pagada).</li>
+      <li>Registrar todos los egresos del día en el módulo Egresos.</li>
+      <li>Si se registraron aportes: verificar el historial en el módulo Aportes.</li>
+    </ul>
+
+    <h3 class="sub-title">Antes de generar reportes</h3>
+    <ul class="checklist">
+      <li>Verificar que Configuración tenga las 5 tasas de provisión ingresadas (no debe aparecer banner amarillo).</li>
+      <li>Confirmar que el período seleccionado corresponde al mes correcto.</li>
+      <li>Revisar en el módulo Mora que los créditos vencidos estén al día en su registro.</li>
+      <li>Para el Anexo 6: verificar que no aparezca banner de advertencia antes de exportar.</li>
+    </ul>
+
+    <h3 class="sub-title">Antes de entregar información SBS (BDCC)</h3>
+    <ul class="checklist">
+      <li>Verificar que todos los socios con créditos vigentes tengan género y estado civil registrados en el módulo Socios.</li>
+      <li>Confirmar con Créditos: el valor de TPINT (¿nominal o TEA?) y los códigos TIPCRED/SUBTIPCRED.</li>
+      <li>Confirmar con Contabilidad: las cuentas CCVE y CCJU.</li>
+      <li>Descargar BD01 y BD02-A. Revisar fila por fila contra el Oficio SBS N°32791-2026-SBS.</li>
+      <li>Verificar el nombre del archivo: debe ser <code>01270_BD01_YYYYMM.txt</code> y <code>01270_BD02A_YYYYMM.txt</code>.</li>
+      <li>Revisar que el separador de campos sea el tabulador (TAB), no coma ni punto y coma.</li>
+      <li>Una vez validados internamente: enviar a la SBS antes del 20 de julio 2026.</li>
+    </ul>
+  </section>
+
+</div>
+
+<footer>
+  COOPAC CEJUASSA — Manual de Usuario — Versión MVP 1.0 — Junio 2026<br>
+  Generado por el sistema de gestión CEJUASSA. Documento interno — no distribuir externamente.
+</footer>
+
+</body>
+</html>

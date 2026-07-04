@@ -4,6 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
+import { useRol } from '@/lib/useRol'
 import {
   LayoutDashboard,
   Users,
@@ -18,12 +19,14 @@ import {
   UserCog,
   Settings,
   LogOut,
+  RefreshCw,
 } from 'lucide-react'
 
 const navItems = [
   { label: 'Dashboard',     href: '/dashboard',                   Icon: LayoutDashboard },
   { label: 'Socios',        href: '/dashboard/socios',            Icon: Users },
   { label: 'Créditos',      href: '/dashboard/creditos',          Icon: CreditCard },
+  { label: 'Ampliaciones',  href: '/dashboard/ampliaciones',      Icon: RefreshCw },
   { label: 'Pagos',         href: '/dashboard/pagos',             Icon: Receipt },
   { label: 'Aportes',       href: '/dashboard/aportes',           Icon: PiggyBank },
   { label: 'Egresos',       href: '/dashboard/egresos',           Icon: TrendingDown },
@@ -35,9 +38,23 @@ const navItems = [
   { label: 'Configuración', href: '/dashboard/configuracion',     Icon: Settings },
 ]
 
+const HIDDEN_FOR_ROLE: Record<string, string[]> = {
+  tesoreria:    ['/dashboard/usuarios', '/dashboard/configuracion'],
+  creditos:     ['/dashboard/egresos', '/dashboard/usuarios', '/dashboard/configuracion'],
+  contabilidad: ['/dashboard/convenios', '/dashboard/usuarios', '/dashboard/configuracion'],
+}
+
+function getVisibleItems(rol: string | null, loading: boolean) {
+  if (loading) return []
+  if (!rol || rol === 'admin') return navItems
+  const hidden = new Set(HIDDEN_FOR_ROLE[rol] ?? [])
+  return navItems.filter(item => !hidden.has(item.href))
+}
+
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const router   = useRouter()
+  const { rol, loading } = useRol()
 
   async function handleSignOut() {
     const supabase = createClient()
@@ -55,7 +72,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-lg overflow-hidden flex-shrink-0 bg-white/10 flex items-center justify-center">
               <Image
-                src="/logo-cejuassa.png"
+                src="/logo-cejuassa.svg"
                 alt="Logo COOPAC CEJUASSA"
                 width={36}
                 height={36}
@@ -71,7 +88,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
         {/* Navegación */}
         <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
-          {navItems.map(({ label, href, Icon }) => {
+          {getVisibleItems(rol, loading).map(({ label, href, Icon }) => {
             const isActive =
               href === '/dashboard'
                 ? pathname === '/dashboard'

@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { PageFrame, PageToolbar, btnPrimary } from '../_components/ui'
 
 type Reporte = {
   titulo: string
@@ -10,7 +11,7 @@ type Reporte = {
   activo: boolean
 }
 
-const REPORTES: Reporte[] = [
+const REPORTES_ACTIVOS: Reporte[] = [
   {
     titulo: 'Anexo N°6',
     subtitulo: 'Reporte de Deudores SBS',
@@ -36,37 +37,32 @@ const REPORTES: Reporte[] = [
 
 export default function ReportesPage() {
   return (
-    <div className="p-8">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-800">Reportes</h1>
-        <p className="text-sm text-gray-500 mt-0.5">Reportes regulatorios y de gestión</p>
-      </div>
+    <PageFrame>
+      <PageToolbar
+        title="Reportes"
+        subtitle="Reportes regulatorios y de gestión"
+      />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        {REPORTES.map((r) => (
+        {REPORTES_ACTIVOS.map((r) => (
           <div
             key={r.titulo}
-            className={`bg-white rounded-xl border border-gray-200 p-6 flex flex-col gap-3 ${!r.activo ? 'opacity-50' : ''}`}
+            className={`bg-white rounded-xl border border-slate-200 p-6 flex flex-col gap-3 ${!r.activo ? 'opacity-50' : ''}`}
           >
             <div>
-              <h2 className="text-lg font-bold text-gray-800">{r.titulo}</h2>
-              <p className="text-sm font-medium text-gray-500 mt-0.5">{r.subtitulo}</p>
+              <h2 className="text-base font-semibold text-slate-800">{r.titulo}</h2>
+              <p className="text-sm font-medium text-slate-500 mt-0.5">{r.subtitulo}</p>
               {r.descripcion && (
-                <p className="text-xs text-gray-400 mt-2">{r.descripcion}</p>
+                <p className="text-xs text-slate-400 mt-2">{r.descripcion}</p>
               )}
             </div>
-
             <div className="mt-auto pt-2">
               {r.activo ? (
-                <Link
-                  href={r.href}
-                  className="inline-flex items-center px-4 py-2 rounded-lg text-white text-sm font-medium hover:opacity-90 transition-opacity"
-                  style={{ backgroundColor: '#1e3a5f' }}
-                >
+                <Link href={r.href} className={btnPrimary}>
                   Generar →
                 </Link>
               ) : (
-                <span className="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium bg-gray-100 text-gray-400 border border-gray-200">
+                <span className="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-100 text-slate-400 border border-slate-200">
                   Próximamente
                 </span>
               )}
@@ -74,6 +70,25 @@ export default function ReportesPage() {
           </div>
         ))}
       </div>
-    </div>
+
+      {/* ── Archivado / fuera de alcance actual ── */}
+      <div className="mt-10">
+        <div className="flex items-center gap-3 mb-4">
+          <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wider">Archivado / fuera de alcance actual</h2>
+          <div className="flex-1 h-px bg-slate-200" />
+        </div>
+        <div className="max-w-md">
+          <div className="bg-slate-50 rounded-xl border border-slate-200 p-5 flex flex-col gap-2 opacity-60">
+            <div>
+              <h3 className="text-base font-semibold text-slate-500">BDCC SBS</h3>
+              <p className="text-sm text-slate-400 mt-0.5">Base de Datos de Cartera Crediticia</p>
+              <p className="text-xs text-slate-400 mt-2">
+                Fuera del alcance actual. La cooperativa confirmó que el único reporte regulatorio activo es Anexo N°6.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </PageFrame>
   )
 }

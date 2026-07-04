@@ -4,7 +4,10 @@ import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase'
 import { generarReciboPDF } from './utils/generarReciboPDF'
-import { FileText } from 'lucide-react'
+import { useRol } from '@/lib/useRol'
+import { FileText, Receipt, X } from 'lucide-react'
+import { formatNombrePersona } from '@/lib/formatNombre'
+import { PageFrame, PageToolbar, FilterBar, DataTableShell, DataTableHeader, DataTableEmpty, TableSkeleton, RecordMeta, StatusBadge, btnPrimary, btnGhost, selectCls } from '../_components/ui'
 
 type PagoRecibo = {
   id: string
@@ -26,12 +29,14 @@ const ESTADO_MAP: Record<string, { bg: string; text: string; label: string }> = 
 }
 
 function EstadoBadge({ estado }: { estado: string }) {
+  const variantMap: Record<string, 'info' | 'warning' | 'success' | 'neutral'> = {
+    registrado:    'info',
+    en_correccion: 'warning',
+    validado:      'success',
+    cerrado:       'neutral',
+  }
   const s = ESTADO_MAP[estado] ?? ESTADO_MAP.registrado
-  return (
-    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${s.bg} ${s.text}`}>
-      {s.label}
-    </span>
-  )
+  return <StatusBadge label={s.label} variant={variantMap[estado] ?? 'neutral'} />
 }
 
 function fmt(n: number) {
@@ -44,7 +49,6 @@ function formatDate(d: string) {
   return `${day}/${m}/${y}`
 }
 
-// Build list of YYYY-MM options for last 24 months
 function buildPeriodOptions() {
   const options: string[] = []
   const now = new Date()
@@ -58,6 +62,8 @@ function buildPeriodOptions() {
 }
 
 export default function PagosPage() {
+  const { rol } = useRol()
+  const puedeRegistrar = rol === 'admin' || rol === 'tesoreria'
   const [pagos, setPagos] = useState<PagoRecibo[]>([])
   const [loading, setLoading] = useState(true)
   const [filterPeriodo, setFilterPeriodo] = useState('')
@@ -77,6 +83,7 @@ export default function PagosPage() {
   }
 
   const periodOptions = useMemo(() => buildPeriodOptions(), [])
+  const hasFilters = filterPeriodo || filterCanal || filterEstado
 
   useEffect(() => {
     createClient()
@@ -103,97 +110,102 @@ export default function PagosPage() {
     [filtered]
   )
 
-  return (
-    <div className="p-8">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Pagos / Recibos</h1>
-        <Link
-          href="/dashboard/pagos/nuevo"
-          className="px-4 py-2 rounded-lg text-white text-sm font-medium hover:opacity-90 transition-opacity"
-          style={{ backgroundColor: '#1e3a5f' }}
-        >
-          + Registrar Pago
-        </Link>
-      </div>
+  function clearFilters() {
+    setFilterPeriodo('')
+    setFilterCanal('')
+    setFilterEstado('')
+  }
 
-      {/* Filtros */}
-      <div className="flex flex-wrap gap-3 mb-5">
+  return (
+    <PageFrame>
+      <PageToolbar
+        title="Pagos / Recibos"
+        subtitle={!loading ? `${pagos.length} recibos registrados` : undefined}
+        actions={
+          puedeRegistrar ? (
+            <Link href="/dashboard/pagos/nuevo" className={btnPrimary}>
+              + Registrar Pago
+            </Link>
+          ) : undefined
+        }
+      />
+
+      <FilterBar>
         <select
           value={filterPeriodo}
           onChange={e => setFilterPeriodo(e.target.value)}
-          className="px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
+          className={selectCls}
         >
           <option value="">Todos los periodos</option>
           {periodOptions.map(p => (
             <option key={p} value={p}>{p}</option>
           ))}
         </select>
-
         <select
           value={filterCanal}
           onChange={e => setFilterCanal(e.target.value)}
-          className="px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
+          className={selectCls}
         >
           <option value="">Todos los canales</option>
           <option value="convenio">Convenio</option>
           <option value="caja">Caja</option>
         </select>
-
         <select
           value={filterEstado}
           onChange={e => setFilterEstado(e.target.value)}
-          className="px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
+          className={selectCls}
         >
           <option value="">Todos los estados</option>
           {Object.entries(ESTADO_MAP).map(([key, val]) => (
             <option key={key} value={key}>{val.label}</option>
           ))}
         </select>
-
-        {(filterPeriodo || filterCanal || filterEstado) && (
+        {hasFilters && (
           <button
-            onClick={() => { setFilterPeriodo(''); setFilterCanal(''); setFilterEstado('') }}
-            className="px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-500 hover:bg-gray-50 transition-colors"
+            onClick={clearFilters}
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-500 hover:bg-slate-50 transition-colors active:scale-[0.97]"
           >
-            Limpiar filtros
+            <X size={13} /> Limpiar
           </button>
         )}
-      </div>
+      </FilterBar>
 
-      {/* Tabla */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        {loading ? (
-          <div className="p-12 text-center text-gray-400 text-sm">Cargando pagos...</div>
-        ) : filtered.length === 0 ? (
-          <div className="p-12 text-center text-gray-400 text-sm">No se encontraron pagos</div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-gray-200 bg-gray-50">
-                  {['Nº Recibo', 'Fecha', 'Socio', 'Crédito', 'Canal', 'Total', 'Estado', 'Acciones'].map(h => (
-                    <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap">
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                {filtered.map(p => (
-                  <tr key={p.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-4 py-3 text-sm font-medium text-gray-900 whitespace-nowrap">{p.nro_recibo}</td>
-                    <td className="px-4 py-3 text-sm text-gray-600 whitespace-nowrap">{formatDate(p.fecha)}</td>
-                    <td className="px-4 py-3 text-sm text-gray-800">
-                      {p.socios ? `${p.socios.apellidos}, ${p.socios.nombres}` : '—'}
+      <DataTableShell>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <DataTableHeader>
+              <tr>
+                {['Nº Recibo', 'Fecha', 'Socio', 'Crédito', 'Canal', 'Total', 'Estado', 'Acciones'].map(h => (
+                  <th key={h} className="px-4 py-3 text-left text-xs font-medium text-slate-500 whitespace-nowrap">
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </DataTableHeader>
+            <tbody>
+              {loading ? (
+                <TableSkeleton rows={6} cols={8} />
+              ) : filtered.length === 0 ? (
+                <DataTableEmpty
+                  cols={8}
+                  message={hasFilters ? 'Sin pagos que coincidan con los filtros aplicados.' : 'No hay pagos registrados aún.'}
+                  suggestion={hasFilters ? 'Limpie los filtros para ver todos los pagos.' : undefined}
+                />
+              ) : (
+                filtered.map(p => (
+                  <tr key={p.id} className="border-b border-slate-100 last:border-0 hover:bg-slate-50/50 transition-colors">
+                    <td className="px-4 py-3 font-medium text-slate-900 whitespace-nowrap">{p.nro_recibo}</td>
+                    <td className="px-4 py-3 text-slate-600 whitespace-nowrap">{formatDate(p.fecha)}</td>
+                    <td className="px-4 py-3 text-slate-800">
+                      {p.socios ? formatNombrePersona(p.socios.apellidos, p.socios.nombres) : '—'}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-700 whitespace-nowrap">
+                    <td className="px-4 py-3 text-slate-700 whitespace-nowrap">
                       {p.creditos?.nro_pagare ?? '—'}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-700 whitespace-nowrap capitalize">
+                    <td className="px-4 py-3 text-slate-700 whitespace-nowrap capitalize">
                       {p.canal_pago}
                     </td>
-                    <td className="px-4 py-3 text-sm font-semibold text-gray-900 whitespace-nowrap">
+                    <td className="px-4 py-3 font-semibold text-slate-900 whitespace-nowrap tabular-nums">
                       S/ {fmt(p.monto_total)}
                     </td>
                     <td className="px-4 py-3">
@@ -201,40 +213,35 @@ export default function PagosPage() {
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex gap-2">
-                        <Link
-                          href={`/dashboard/pagos/${p.id}`}
-                          className="px-3 py-1 text-xs font-medium rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors"
-                        >
+                        <Link href={`/dashboard/pagos/${p.id}`} className={btnGhost}>
                           Ver
                         </Link>
                         <button
                           onClick={() => handlePDF(p.id)}
                           disabled={generandoPDF === p.id}
-                          className="px-3 py-1 text-xs font-medium rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          className={`${btnGhost} disabled:opacity-50 disabled:cursor-not-allowed`}
                         >
-                          {generandoPDF === p.id ? 'Generando...' : <span className="flex items-center gap-1"><FileText size={12}/>PDF</span>}
+                          {generandoPDF === p.id ? 'Generando...' : <><FileText size={12} />PDF</>}
                         </button>
                       </div>
                     </td>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </DataTableShell>
 
       {!loading && filtered.length > 0 && (
-        <div className="flex items-center justify-between mt-3">
-          <p className="text-xs text-gray-400">
-            {filtered.length} {filtered.length === 1 ? 'pago' : 'pagos'}
-          </p>
-          <p className="text-sm font-semibold text-gray-700">
+        <div className="flex items-center justify-between mt-2">
+          <RecordMeta>{filtered.length} {filtered.length === 1 ? 'pago' : 'pagos'}</RecordMeta>
+          <p className="text-sm font-semibold text-slate-700">
             Total del período:{' '}
-            <span style={{ color: '#1e3a5f' }}>S/ {fmt(totalPeriodo)}</span>
+            <span className="text-[#1E3A5F] tabular-nums">S/ {fmt(totalPeriodo)}</span>
           </p>
         </div>
       )}
-    </div>
+    </PageFrame>
   )
 }

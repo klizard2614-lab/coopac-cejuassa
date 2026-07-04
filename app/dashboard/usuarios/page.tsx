@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase'
 import { Lock, CheckCircle2, AlertCircle } from 'lucide-react'
+import { PageFrame, PageToolbar, DataTableShell, DataTableHeader, DataTableEmpty, TableSkeleton, RecordMeta, StatusBadge, InlineAlert, btnPrimary, btnGhost, btnEdit, inputCls, selectCls } from '../_components/ui'
 
 type Usuario = {
   id: string
@@ -21,11 +22,11 @@ const ROLES = [
   { value: 'contabilidad', label: 'Contabilidad' },
 ]
 
-const ROL_STYLE: Record<string, string> = {
-  admin:        'bg-blue-100 text-blue-800',
-  tesoreria:    'bg-green-100 text-green-800',
-  creditos:     'bg-purple-100 text-purple-800',
-  contabilidad: 'bg-orange-100 text-orange-800',
+const ROL_VARIANT: Record<string, 'success' | 'warning' | 'neutral' | 'info'> = {
+  admin:        'info',
+  tesoreria:    'success',
+  creditos:     'warning',
+  contabilidad: 'neutral',
 }
 
 function formatDate(d: string) {
@@ -111,99 +112,80 @@ export default function UsuariosPage() {
   }
 
   if (checkingRol) {
-    return <div className="p-8 text-sm text-gray-400">Verificando acceso...</div>
+    return <div className="min-h-full bg-slate-50 p-8 text-sm text-slate-400">Verificando acceso...</div>
   }
 
   if (rolActual !== 'admin') {
     return (
-      <div className="p-8 max-w-md">
-        <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
-          <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-3"><Lock size={20} className="text-red-600" /></div>
+      <PageFrame>
+        <div className="max-w-md bg-red-50 border border-red-200 rounded-xl p-6 text-center">
+          <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-3">
+            <Lock size={20} className="text-red-600" />
+          </div>
           <p className="font-semibold text-red-800 mb-1">Acceso restringido</p>
           <p className="text-sm text-red-600">Solo los administradores pueden gestionar usuarios.</p>
-          <Link href="/dashboard" className="mt-4 inline-block text-sm underline text-red-700">
-            Volver al dashboard
-          </Link>
+          <Link href="/dashboard" className={`${btnGhost} mt-4 inline-flex`}>Volver al dashboard</Link>
         </div>
-      </div>
+      </PageFrame>
     )
   }
 
   return (
-    <div className="p-8">
-      {/* Encabezado */}
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-800">Usuarios</h1>
-          <p className="text-sm text-gray-500 mt-0.5">Gestión de acceso al sistema</p>
-        </div>
-        <button
-          onClick={() => setShowModal(true)}
-          className="px-4 py-2 rounded-lg text-white text-sm font-medium hover:opacity-90 transition-opacity"
-          style={{ backgroundColor: '#1e3a5f' }}
-        >
-          + Invitar usuario
-        </button>
-      </div>
+    <PageFrame>
+      <PageToolbar
+        title="Usuarios"
+        subtitle="Gestión de acceso al sistema"
+        actions={
+          <button onClick={() => setShowModal(true)} className={btnPrimary}>
+            + Invitar usuario
+          </button>
+        }
+      />
 
-      {/* Tabla */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        {loading ? (
-          <div className="p-12 text-center text-gray-400 text-sm">Cargando usuarios...</div>
-        ) : error ? (
-          <div className="p-12 text-center text-red-400 text-sm">Error: {error}</div>
-        ) : usuarios.length === 0 ? (
-          <div className="p-12 text-center text-gray-400 text-sm">
-            No hay usuarios registrados.
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-gray-200 bg-gray-50">
-                  {['Nombre', 'Email', 'Rol', 'Estado', 'Registrado', 'Acciones'].map(h => (
-                    <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap">
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                {usuarios.map(u => (
-                  <tr key={u.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-4 py-3 text-sm font-medium text-gray-900">{u.nombre || '—'}</td>
-                    <td className="px-4 py-3 text-sm text-gray-600">{u.email}</td>
-                    <td className="px-4 py-3">
-                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${ROL_STYLE[u.rol] ?? 'bg-gray-100 text-gray-600'}`}>
-                        {ROLES.find(r => r.value === u.rol)?.label ?? u.rol}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3">
-                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${
-                        u.activo ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-                      }`}>
-                        {u.activo ? 'Activo' : 'Inactivo'}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-500 whitespace-nowrap">{formatDate(u.created_at)}</td>
-                    <td className="px-4 py-3">
-                      <Link
-                        href={`/dashboard/usuarios/${u.id}`}
-                        className="px-3 py-1 text-xs font-medium rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors"
-                      >
-                        Editar
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
+      {error && <InlineAlert variant="danger">Error: {error}</InlineAlert>}
+
+      <DataTableShell>
+        <DataTableHeader>
+          <tr>
+            {['Nombre', 'Email', 'Rol', 'Estado', 'Registrado', 'Acciones'].map(h => (
+              <th key={h} className="px-4 py-2.5 text-left text-xs font-medium text-slate-500 whitespace-nowrap">{h}</th>
+            ))}
+          </tr>
+        </DataTableHeader>
+        <tbody>
+          {loading ? (
+            <TableSkeleton rows={4} cols={6} />
+          ) : usuarios.length === 0 ? (
+            <DataTableEmpty cols={6} message="No hay usuarios registrados." />
+          ) : (
+            usuarios.map(u => (
+              <tr key={u.id} className="border-b border-slate-100 last:border-0 hover:bg-slate-50/50 transition-colors">
+                <td className="px-4 py-2.5 font-medium text-slate-800">{u.nombre || '—'}</td>
+                <td className="px-4 py-2.5 text-slate-600 text-sm">{u.email}</td>
+                <td className="px-4 py-2.5">
+                  <StatusBadge
+                    label={ROLES.find(r => r.value === u.rol)?.label ?? u.rol}
+                    variant={ROL_VARIANT[u.rol] ?? 'neutral'}
+                  />
+                </td>
+                <td className="px-4 py-2.5">
+                  <StatusBadge
+                    label={u.activo ? 'Activo' : 'Inactivo'}
+                    variant={u.activo ? 'success' : 'danger'}
+                  />
+                </td>
+                <td className="px-4 py-2.5 text-sm text-slate-500 whitespace-nowrap">{formatDate(u.created_at)}</td>
+                <td className="px-4 py-2.5">
+                  <Link href={`/dashboard/usuarios/${u.id}`} className={btnEdit}>Editar</Link>
+                </td>
+              </tr>
+            ))
+          )}
+        </tbody>
+      </DataTableShell>
 
       {!loading && !error && usuarios.length > 0 && (
-        <p className="text-xs text-gray-400 mt-3">{usuarios.length} {usuarios.length === 1 ? 'usuario' : 'usuarios'}</p>
+        <RecordMeta>{usuarios.length} {usuarios.length === 1 ? 'usuario' : 'usuarios'}</RecordMeta>
       )}
 
       {/* Modal invitar */}
@@ -211,8 +193,8 @@ export default function UsuariosPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 p-6">
             <div className="flex items-center justify-between mb-5">
-              <h2 className="text-lg font-bold text-gray-800">Invitar usuario</h2>
-              <button onClick={closeModal} className="text-gray-400 hover:text-gray-600 text-xl leading-none">×</button>
+              <h2 className="text-lg font-bold text-slate-800">Invitar usuario</h2>
+              <button onClick={closeModal} className="text-slate-400 hover:text-slate-600 text-xl leading-none">×</button>
             </div>
 
             {invMsg?.type === 'ok' ? (
@@ -220,31 +202,23 @@ export default function UsuariosPage() {
                 <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-sm text-green-700">
                   <span className="flex items-start gap-2"><CheckCircle2 size={15} className="flex-shrink-0 mt-0.5" />{invMsg.text}</span>
                 </div>
-                <button
-                  onClick={closeModal}
-                  className="w-full py-2.5 rounded-lg text-white text-sm font-medium hover:opacity-90 transition-opacity"
-                  style={{ backgroundColor: '#1e3a5f' }}
-                >
-                  Cerrar
-                </button>
+                <button onClick={closeModal} className={`w-full ${btnPrimary}`}>Cerrar</button>
               </div>
             ) : (
               <form onSubmit={handleInvitar} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Nombre completo
-                  </label>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Nombre completo</label>
                   <input
                     type="text"
                     value={invNombre}
                     onChange={e => setInvNombre(e.target.value)}
                     placeholder="Ej. Juan Pérez"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
+                    className={inputCls}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-slate-700 mb-1">
                     Correo electrónico <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -253,16 +227,16 @@ export default function UsuariosPage() {
                     onChange={e => setInvEmail(e.target.value)}
                     required
                     placeholder="usuario@coopac.pe"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
+                    className={inputCls}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Rol</label>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Rol</label>
                   <select
                     value={invRol}
                     onChange={e => setInvRol(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
+                    className={selectCls}
                   >
                     {ROLES.map(r => (
                       <option key={r.value} value={r.value}>{r.label}</option>
@@ -270,9 +244,9 @@ export default function UsuariosPage() {
                   </select>
                 </div>
 
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-xs text-blue-700">
+                <InlineAlert variant="info">
                   El usuario recibirá un email de invitación para configurar su contraseña.
-                </div>
+                </InlineAlert>
 
                 {invMsg?.type === 'err' && (
                   <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-700">
@@ -281,18 +255,11 @@ export default function UsuariosPage() {
                 )}
 
                 <div className="flex gap-3 pt-1">
-                  <button
-                    type="button"
-                    onClick={closeModal}
-                    className="flex-1 py-2.5 rounded-lg text-sm font-medium border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors"
-                  >
-                    Cancelar
-                  </button>
+                  <button type="button" onClick={closeModal} className={`flex-1 ${btnGhost}`}>Cancelar</button>
                   <button
                     type="submit"
                     disabled={invLoading}
-                    className="flex-1 py-2.5 rounded-lg text-white text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
-                    style={{ backgroundColor: '#1e3a5f' }}
+                    className={`flex-1 ${btnPrimary} disabled:opacity-50`}
                   >
                     {invLoading ? 'Enviando...' : 'Enviar invitación'}
                   </button>
@@ -302,6 +269,6 @@ export default function UsuariosPage() {
           </div>
         </div>
       )}
-    </div>
+    </PageFrame>
   )
 }

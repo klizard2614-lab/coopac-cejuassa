@@ -4,6 +4,8 @@ import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase'
 import { CheckCircle2 } from 'lucide-react'
+import { formatNombrePersona } from '@/lib/formatNombre'
+import { PageFrame, PageToolbar, FilterBar, DataTableShell, DataTableHeader, DataTableEmpty, TableSkeleton, RecordMeta, btnGhost, inputCls, selectCls } from '../_components/ui'
 
 // ─── tipos ────────────────────────────────────────────────────────────────────
 
@@ -90,10 +92,10 @@ function DiasAtrasoTag({ dias }: { dias: number }) {
 
 function ResumenCard({ label, value, sub, color }: { label: string; value: string; sub?: string; color: string }) {
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-5">
-      <p className={`text-2xl font-bold`} style={{ color }}>{value}</p>
-      <p className="text-sm text-gray-500 mt-1">{label}</p>
-      {sub && <p className="text-xs text-gray-400 mt-0.5">{sub}</p>}
+    <div className="bg-white rounded-xl border border-slate-200 p-5">
+      <p className="text-2xl font-bold tabular-nums" style={{ color }}>{value}</p>
+      <p className="text-sm text-slate-500 mt-1">{label}</p>
+      {sub && <p className="text-xs text-slate-400 mt-0.5">{sub}</p>}
     </div>
   )
 }
@@ -191,133 +193,89 @@ export default function MoraPage() {
   const hayFiltros = filterDias || filterTipo || search
 
   return (
-    <div className="p-8">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-800">Cartera en Mora</h1>
-          <p className="text-sm text-gray-500 mt-0.5">Créditos vigentes con cuotas vencidas</p>
-        </div>
-        <Link
-          href="/dashboard/creditos"
-          className="px-4 py-2 rounded-lg text-sm font-medium border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors"
-        >
-          ← Créditos
-        </Link>
-      </div>
+    <PageFrame>
+      <PageToolbar
+        title="Cartera en Mora"
+        subtitle="Créditos vigentes con cuotas vencidas"
+        actions={
+          <Link href="/dashboard/creditos" className={btnGhost}>← Créditos</Link>
+        }
+      />
 
       {/* Tarjetas resumen */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <ResumenCard
-          label="Créditos en mora"
-          value={loading ? '—' : String(totalCreditos)}
-          sub="créditos vigentes"
-          color="#dc2626"
-        />
-        <ResumenCard
-          label="Socios afectados"
-          value={loading ? '—' : String(totalSocios)}
-          color="#b45309"
-        />
-        <ResumenCard
-          label="Monto vencido"
-          value={loading ? '—' : `S/ ${fmt(totalVencido)}`}
-          sub="suma cuotas en mora"
-          color="#dc2626"
-        />
-        <ResumenCard
-          label="Capital en riesgo"
-          value={loading ? '—' : `S/ ${fmt(totalEnRiesgo)}`}
-          sub="saldo capital"
-          color="#9333ea"
-        />
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-5">
+        <ResumenCard label="Créditos en mora" value={loading ? '—' : String(totalCreditos)} sub="créditos vigentes" color="#dc2626" />
+        <ResumenCard label="Socios afectados" value={loading ? '—' : String(totalSocios)} color="#b45309" />
+        <ResumenCard label="Monto vencido" value={loading ? '—' : `S/ ${fmt(totalVencido)}`} sub="suma cuotas en mora" color="#dc2626" />
+        <ResumenCard label="Capital en riesgo" value={loading ? '—' : `S/ ${fmt(totalEnRiesgo)}`} sub="saldo capital" color="#9333ea" />
       </div>
 
-      {/* Filtros */}
-      <div className="flex flex-wrap gap-3 mb-5">
+      <FilterBar>
         <input
           type="text"
           placeholder="Buscar por socio o Nº pagaré..."
           value={search}
           onChange={e => setSearch(e.target.value)}
-          className="w-full max-w-xs px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
+          className={`${inputCls} w-full max-w-xs`}
         />
-        <select
-          value={filterDias}
-          onChange={e => setFilterDias(e.target.value)}
-          className="px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
-        >
+        <select value={filterDias} onChange={e => setFilterDias(e.target.value)} className={selectCls}>
           <option value="">Todos los atrasos</option>
           <option value="1-30">1–30 días</option>
           <option value="31-60">31–60 días</option>
           <option value="61-90">61–90 días</option>
           <option value="+90">+90 días</option>
         </select>
-        <select
-          value={filterTipo}
-          onChange={e => setFilterTipo(e.target.value)}
-          className="px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
-        >
+        <select value={filterTipo} onChange={e => setFilterTipo(e.target.value)} className={selectCls}>
           <option value="">Todos los tipos</option>
           {Object.entries(TIPO_LABELS).map(([k, v]) => (
             <option key={k} value={k}>{v}</option>
           ))}
         </select>
         {hayFiltros && (
-          <button
-            onClick={() => { setFilterDias(''); setFilterTipo(''); setSearch('') }}
-            className="px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-500 hover:bg-gray-50 transition-colors"
-          >
+          <button onClick={() => { setFilterDias(''); setFilterTipo(''); setSearch('') }} className={btnGhost}>
             Limpiar filtros
           </button>
         )}
-      </div>
+      </FilterBar>
 
-      {/* Tabla */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        {loading ? (
-          <div className="p-12 text-center text-gray-400 text-sm">Cargando cartera en mora...</div>
-        ) : filtered.length === 0 ? (
-          <div className="p-12 text-center">
-            <div className="w-12 h-12 rounded-full bg-green-50 flex items-center justify-center mx-auto mb-3">
-              <CheckCircle2 size={24} className="text-green-600" />
-            </div>
-            <p className="text-gray-500 text-sm font-medium">
-              {hayFiltros ? 'Sin resultados para los filtros aplicados' : 'No hay créditos en mora'}
-            </p>
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-gray-200 bg-gray-50">
-                  {[
-                    'Nº Socio', 'Apellidos y Nombres', 'Nº Pagaré',
-                    'F. Desembolso', 'Cuotas vencidas', 'Días atraso',
-                    'Saldo Capital', 'Monto Vencido', 'Acciones',
-                  ].map(h => (
-                    <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap">
-                      {h}
-                    </th>
-                  ))}
+      <DataTableShell>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <DataTableHeader>
+              <tr>
+                {['Nº Socio', 'Apellidos y Nombres', 'Nº Pagaré', 'F. Desembolso', 'Cuotas vencidas', 'Días atraso', 'Saldo Capital', 'Monto Vencido', 'Acciones'].map(h => (
+                  <th key={h} className="px-4 py-3 text-left text-xs font-medium text-slate-500 whitespace-nowrap">
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </DataTableHeader>
+            <tbody>
+              {loading ? (
+                <TableSkeleton rows={5} cols={9} />
+              ) : filtered.length === 0 ? (
+                <tr>
+                  <td colSpan={9} className="py-14 text-center">
+                    <div className="flex flex-col items-center gap-2">
+                      <div className="w-11 h-11 rounded-full bg-emerald-50 flex items-center justify-center">
+                        <CheckCircle2 size={20} className="text-emerald-600" />
+                      </div>
+                      <p className="text-sm text-slate-500">
+                        {hayFiltros ? 'Sin resultados para los filtros aplicados' : 'No hay créditos en mora'}
+                      </p>
+                    </div>
+                  </td>
                 </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                {filtered.map(c => (
-                  <tr key={c.id} className="hover:bg-red-50 transition-colors">
-                    <td className="px-4 py-3 text-sm font-medium text-gray-900 whitespace-nowrap">
-                      {c.socios?.nro_socio ?? '—'}
+              ) : (
+                filtered.map(c => (
+                  <tr key={c.id} className="border-b border-slate-100 last:border-0 hover:bg-red-50/50 transition-colors">
+                    <td className="px-4 py-3 font-medium text-slate-900 whitespace-nowrap">{c.socios?.nro_socio ?? '—'}</td>
+                    <td className="px-4 py-3 text-slate-800">
+                      {c.socios ? formatNombrePersona(c.socios.apellidos, c.socios.nombres) : '—'}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-800">
-                      {c.socios ? `${c.socios.apellidos}, ${c.socios.nombres}` : '—'}
-                    </td>
-                    <td className="px-4 py-3 text-sm font-medium text-gray-900 whitespace-nowrap">
-                      {c.nro_pagare}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-600 whitespace-nowrap">
-                      {fmtFecha(c.fecha_desembolso)}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-center">
+                    <td className="px-4 py-3 font-medium text-slate-900 whitespace-nowrap">{c.nro_pagare}</td>
+                    <td className="px-4 py-3 text-slate-600 whitespace-nowrap">{fmtFecha(c.fecha_desembolso)}</td>
+                    <td className="px-4 py-3 text-center">
                       <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-red-100 text-red-800 text-xs font-bold">
                         {c.cuotas_vencidas}
                       </span>
@@ -325,34 +283,27 @@ export default function MoraPage() {
                     <td className="px-4 py-3 whitespace-nowrap">
                       <DiasAtrasoTag dias={c.dias_atraso} />
                     </td>
-                    <td className="px-4 py-3 text-sm font-semibold text-gray-900 whitespace-nowrap">
-                      S/ {fmt(c.saldo_capital)}
-                    </td>
-                    <td className="px-4 py-3 text-sm font-semibold text-red-700 whitespace-nowrap">
-                      S/ {fmt(c.monto_vencido)}
-                    </td>
+                    <td className="px-4 py-3 font-semibold text-slate-900 whitespace-nowrap tabular-nums">S/ {fmt(c.saldo_capital)}</td>
+                    <td className="px-4 py-3 font-semibold text-red-700 whitespace-nowrap tabular-nums">S/ {fmt(c.monto_vencido)}</td>
                     <td className="px-4 py-3">
-                      <Link
-                        href={`/dashboard/creditos/${c.id}`}
-                        className="px-3 py-1 text-xs font-medium rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors whitespace-nowrap"
-                      >
+                      <Link href={`/dashboard/creditos/${c.id}`} className={`${btnGhost} whitespace-nowrap`}>
                         Ver crédito
                       </Link>
                     </td>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </DataTableShell>
 
       {!loading && filtered.length > 0 && (
-        <p className="text-xs text-gray-400 mt-3">
+        <RecordMeta>
           {filtered.length} {filtered.length === 1 ? 'crédito en mora' : 'créditos en mora'}
           {hayFiltros ? ' (filtrado)' : ''}
-        </p>
+        </RecordMeta>
       )}
-    </div>
+    </PageFrame>
   )
 }

@@ -3,6 +3,12 @@
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import { createClient } from '@/lib/supabase'
 import SocioSearch from '@/app/dashboard/creditos/_components/SocioSearch'
+import { formatNombrePersona } from '@/lib/formatNombre'
+import { useRol } from '@/lib/useRol'
+import AccesoDenegado from '@/components/AccesoDenegado'
+import { PageFrame, PageToolbar, FilterBar, DataTableShell, DataTableHeader, DataTableEmpty, TableSkeleton, RecordMeta, InlineAlert, btnPrimary, btnGhost, btnDanger, inputCls as uiInputCls, selectCls } from '../_components/ui'
+
+const PUEDE_EDITAR_EGRESOS = ['admin', 'tesoreria']
 
 type TipoEgreso = 'retiro_socio' | 'fondo_mortuorio' | 'otro'
 
@@ -45,9 +51,7 @@ function formatDate(d: string) {
   return `${day}/${m}/${y}`
 }
 
-const inputCls =
-  'px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-800 bg-white ' +
-  'focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent'
+const inputCls = uiInputCls
 
 type FormData = {
   fecha: string
@@ -70,6 +74,9 @@ const emptyForm: FormData = {
 }
 
 export default function EgresosPage() {
+  const { rol, loading: checkingRol } = useRol()
+  const puedeEditarEgresos = !checkingRol && PUEDE_EDITAR_EGRESOS.includes(rol ?? '')
+
   const [egresos, setEgresos] = useState<Egreso[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -85,6 +92,7 @@ export default function EgresosPage() {
   const [formError, setFormError] = useState('')
 
   const [confirmDelete, setConfirmDelete] = useState<number | null>(null)
+  const [deleteError, setDeleteError] = useState<string | null>(null)
 
   const fetchEgresos = useCallback(async () => {
     setLoading(true)
@@ -123,6 +131,7 @@ export default function EgresosPage() {
   }
 
   function openNuevo() {
+    if (!puedeEditarEgresos) return
     setEditando(null)
     setForm({ ...emptyForm, fecha: todayISO() })
     setFormError('')
@@ -130,6 +139,7 @@ export default function EgresosPage() {
   }
 
   function openEditar(eg: Egreso) {
+    if (!puedeEditarEgresos) return
     setEditando(eg)
     setForm({
       fecha: eg.fecha,
@@ -138,7 +148,7 @@ export default function EgresosPage() {
       beneficiario: eg.beneficiario ?? '',
       id_socio: eg.id_socio ? String(eg.id_socio) : '',
       socioLabel: eg.socios
-        ? `${eg.socios.apellidos}, ${eg.socios.nombres} — DNI: ${eg.socios.dni} | Nº ${eg.socios.nro_socio}`
+        ? `${formatNombrePersona(eg.socios.apellidos, eg.socios.nombres)} — DNI: ${eg.socios.dni} | Nº ${eg.socios.nro_socio}`
         : '',
       descripcion: eg.descripcion ?? '',
     })
@@ -201,34 +211,49 @@ export default function EgresosPage() {
   }
 
   async function handleDelete(id: number) {
+    if (!puedeEditarEgresos) return
     const supabase = createClient()
-    await supabase.from('egresos').delete().eq('id', id)
+    const { error: err } = await supabase.from('egresos').delete().eq('id', id)
     setConfirmDelete(null)
+    if (err) { setDeleteError(`Error al eliminar: ${err.message}`); return }
+    setDeleteError(null)
     fetchEgresos()
   }
 
   const hayFiltrosActivos = applied.tipo || applied.desde || applied.hasta
 
+  if (checkingRol) return <div className="min-h-full bg-slate-50 p-8 text-sm text-slate-400">Verificando acceso...</div>
+  if (rol === 'creditos') return <AccesoDenegado mensaje="El rol Créditos no tiene acceso al módulo de Egresos." />
+
   return (
-    <div className="p-8">
-      {/* Encabezado */}
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Egresos</h1>
-        <button
-          onClick={openNuevo}
-          className="px-4 py-2 rounded-lg text-white text-sm font-medium hover:opacity-90 transition-opacity"
-          style={{ backgroundColor: '#1e3a5f' }}
-        >
-          + Nuevo Egreso
-        </button>
-      </div>
+    <PageFrame>
+      <PageToolbar
+        title="Egresos"
+        subtitle={!loading ? `${egresos.length} ${egresos.length === 1 ? 'egreso' : 'egresos'} registrados` : undefined}
+        actions={
+          puedeEditarEgresos ? (
+            <button onClick={openNuevo} className={btnPrimary}>
+              + Nuevo Egreso
+            </button>
+          ) : undefined
+        }
+      />
+
+      {deleteError && (
+        <InlineAlert variant="danger">
+          <div className="flex items-center justify-between">
+            <span>{deleteError}</span>
+            <button onClick={() => setDeleteError(null)} className="ml-4 text-red-400 hover:text-red-600 text-lg leading-none">&times;</button>
+          </div>
+        </InlineAlert>
+      )}
 
       {/* Tarjeta total */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
-          <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">Total egresos</p>
-          <p className="text-2xl font-bold" style={{ color: '#1e3a5f' }}>S/ {fmt(total)}</p>
-          <p className="text-xs text-gray-400 mt-1">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5">
+        <div className="bg-white rounded-xl border border-slate-200 p-5">
+          <p className="text-xs text-slate-400 uppercase tracking-wide mb-1">Total egresos</p>
+          <p className="text-2xl font-bold text-[#1E3A5F] tabular-nums">S/ {fmt(total)}</p>
+          <p className="text-xs text-slate-400 mt-1">
             {loading ? 'Cargando...' : `${egresos.length} ${egresos.length === 1 ? 'registro' : 'registros'}`}
             {applied.tipo ? ` · ${TIPO_LABELS[applied.tipo as TipoEgreso]}` : ''}
             {applied.desde ? ` · desde ${formatDate(applied.desde)}` : ''}
@@ -237,14 +262,13 @@ export default function EgresosPage() {
         </div>
       </div>
 
-      {/* Filtros */}
-      <div className="flex flex-wrap gap-3 mb-5 items-end">
+      <FilterBar>
         <div className="flex flex-col gap-1">
-          <label className="text-xs text-gray-500">Tipo</label>
+          <label className="text-xs text-slate-500">Tipo</label>
           <select
             value={tipoFilter}
             onChange={e => setTipoFilter(e.target.value as TipoEgreso | '')}
-            className={inputCls}
+            className={selectCls}
           >
             <option value="">Todos los tipos</option>
             <option value="retiro_socio">Retiro de Socio</option>
@@ -253,157 +277,111 @@ export default function EgresosPage() {
           </select>
         </div>
         <div className="flex flex-col gap-1">
-          <label className="text-xs text-gray-500">Fecha desde</label>
-          <input
-            type="date"
-            value={fechaDesde}
-            onChange={e => setFechaDesde(e.target.value)}
-            className={inputCls}
-          />
+          <label className="text-xs text-slate-500">Fecha desde</label>
+          <input type="date" value={fechaDesde} onChange={e => setFechaDesde(e.target.value)} className={inputCls} />
         </div>
         <div className="flex flex-col gap-1">
-          <label className="text-xs text-gray-500">Fecha hasta</label>
-          <input
-            type="date"
-            value={fechaHasta}
-            onChange={e => setFechaHasta(e.target.value)}
-            className={inputCls}
-          />
+          <label className="text-xs text-slate-500">Fecha hasta</label>
+          <input type="date" value={fechaHasta} onChange={e => setFechaHasta(e.target.value)} className={inputCls} />
         </div>
-        <button
-          onClick={handleFiltrar}
-          className="px-4 py-2 rounded-lg text-white text-sm font-medium hover:opacity-90 transition-opacity"
-          style={{ backgroundColor: '#1e3a5f' }}
-        >
+        <button onClick={handleFiltrar} className={`${btnPrimary} self-end`}>
           Filtrar
         </button>
         {hayFiltrosActivos && (
-          <button
-            onClick={handleLimpiar}
-            className="px-4 py-2 rounded-lg text-sm font-medium border border-gray-300 text-gray-600 hover:bg-gray-50 transition-colors"
-          >
+          <button onClick={handleLimpiar} className={`${btnGhost} self-end`}>
             Limpiar
           </button>
         )}
-      </div>
+      </FilterBar>
 
-      {/* Tabla */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        {loading ? (
-          <div className="p-12 text-center text-gray-400 text-sm">Cargando egresos...</div>
-        ) : egresos.length === 0 ? (
-          <div className="p-12 text-center text-gray-400 text-sm">
-            No se encontraron egresos
-            {hayFiltrosActivos ? ' con los filtros aplicados.' : '.'}
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-gray-200 bg-gray-50">
-                  {['Fecha', 'Tipo', 'Socio / Beneficiario', 'Descripción', 'Monto', 'Acciones'].map(h => (
-                    <th
-                      key={h}
-                      className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap"
-                    >
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                {egresos.map(eg => (
-                  <tr key={eg.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-4 py-3 text-sm text-gray-600 whitespace-nowrap">
+      <DataTableShell>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <DataTableHeader>
+              <tr>
+                {['Fecha', 'Tipo', 'Socio / Beneficiario', 'Descripción', 'Monto', 'Acciones'].map(h => (
+                  <th key={h} className="px-4 py-3 text-left text-xs font-medium text-slate-500 whitespace-nowrap">
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </DataTableHeader>
+            <tbody>
+              {loading ? (
+                <TableSkeleton rows={6} cols={6} />
+              ) : egresos.length === 0 ? (
+                <DataTableEmpty
+                  cols={6}
+                  message={hayFiltrosActivos ? 'Sin egresos que coincidan con los filtros aplicados.' : 'Aún no se han registrado egresos.'}
+                  suggestion={puedeEditarEgresos && !hayFiltrosActivos ? 'Use el botón + Nuevo Egreso para registrar el primero.' : undefined}
+                />
+              ) : (
+                egresos.map(eg => (
+                  <tr key={eg.id} className="border-b border-slate-100 last:border-0 hover:bg-slate-50/50 transition-colors">
+                    <td className="px-4 py-3 text-slate-600 whitespace-nowrap">
                       {formatDate(eg.fecha)}
                     </td>
                     <td className="px-4 py-3">
-                      <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${TIPO_COLORS[eg.tipo]}`}>
+                      <span className={`px-2 py-0.5 rounded text-xs font-medium ${TIPO_COLORS[eg.tipo]}`}>
                         {TIPO_LABELS[eg.tipo]}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-900">
+                    <td className="px-4 py-3 text-slate-900">
                       {eg.socios
-                        ? `${eg.socios.apellidos}, ${eg.socios.nombres}`
+                        ? formatNombrePersona(eg.socios.apellidos, eg.socios.nombres)
                         : eg.beneficiario ?? '—'}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-500 max-w-xs">
+                    <td className="px-4 py-3 text-slate-500 max-w-xs">
                       <span className="block truncate max-w-[200px]" title={eg.descripcion ?? ''}>
                         {eg.descripcion ?? '—'}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-sm font-semibold text-gray-900 whitespace-nowrap">
+                    <td className="px-4 py-3 font-semibold text-slate-900 whitespace-nowrap tabular-nums">
                       S/ {fmt(eg.monto)}
                     </td>
                     <td className="px-4 py-3">
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => openEditar(eg)}
-                          className="px-3 py-1 text-xs font-medium rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors"
-                        >
-                          Editar
-                        </button>
-                        <button
-                          onClick={() => setConfirmDelete(eg.id)}
-                          className="px-3 py-1 text-xs font-medium rounded-md border border-red-200 text-red-600 hover:bg-red-50 transition-colors"
-                        >
-                          Eliminar
-                        </button>
-                      </div>
+                      {puedeEditarEgresos && (
+                        <div className="flex gap-2">
+                          <button onClick={() => openEditar(eg)} className={btnGhost}>
+                            Editar
+                          </button>
+                          <button onClick={() => setConfirmDelete(eg.id)} className={btnDanger}>
+                            Eliminar
+                          </button>
+                        </div>
+                      )}
                     </td>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </DataTableShell>
 
       {!loading && egresos.length > 0 && (
-        <p className="text-xs text-gray-400 mt-3">
-          {egresos.length} {egresos.length === 1 ? 'egreso' : 'egresos'}
-        </p>
+        <RecordMeta>{egresos.length} {egresos.length === 1 ? 'egreso' : 'egresos'}</RecordMeta>
       )}
 
       {/* Modal Nuevo / Editar */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 overflow-hidden">
-            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-              <h2 className="text-base font-semibold text-gray-800">
+          <div className="bg-white rounded-2xl border border-slate-200 w-full max-w-lg mx-4 overflow-hidden">
+            <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+              <h2 className="text-base font-semibold text-slate-800">
                 {editando ? 'Editar Egreso' : 'Nuevo Egreso'}
               </h2>
-              <button
-                onClick={closeModal}
-                className="text-gray-400 hover:text-gray-600 text-xl leading-none"
-              >
-                &times;
-              </button>
+              <button onClick={closeModal} className="text-slate-400 hover:text-slate-600 text-xl leading-none">&times;</button>
             </div>
             <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1">
-                    Fecha <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="date"
-                    value={form.fecha}
-                    onChange={e => setForm(f => ({ ...f, fecha: e.target.value }))}
-                    className={inputCls + ' w-full'}
-                    required
-                  />
+                  <label className="block text-xs font-medium text-slate-600 mb-1">Fecha <span className="text-red-500">*</span></label>
+                  <input type="date" value={form.fecha} onChange={e => setForm(f => ({ ...f, fecha: e.target.value }))} className={inputCls + ' w-full'} required />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1">
-                    Tipo <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    value={form.tipo}
-                    onChange={e => setForm(f => ({ ...f, tipo: e.target.value as TipoEgreso | '' }))}
-                    className={inputCls + ' w-full'}
-                    required
-                  >
+                  <label className="block text-xs font-medium text-slate-600 mb-1">Tipo <span className="text-red-500">*</span></label>
+                  <select value={form.tipo} onChange={e => setForm(f => ({ ...f, tipo: e.target.value as TipoEgreso | '' }))} className={inputCls + ' w-full'} required>
                     <option value="">Seleccionar...</option>
                     <option value="retiro_socio">Retiro de Socio</option>
                     <option value="fondo_mortuorio">Fondo Mortuorio</option>
@@ -411,71 +389,28 @@ export default function EgresosPage() {
                   </select>
                 </div>
               </div>
-
               <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1">
-                  Monto (S/) <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="number"
-                  step="0.01"
-                  min="0.01"
-                  value={form.monto}
-                  onChange={e => setForm(f => ({ ...f, monto: e.target.value }))}
-                  placeholder="0.00"
-                  className={inputCls + ' w-full'}
-                  required
-                />
+                <label className="block text-xs font-medium text-slate-600 mb-1">Monto (S/) <span className="text-red-500">*</span></label>
+                <input type="number" step="0.01" min="0.01" value={form.monto} onChange={e => setForm(f => ({ ...f, monto: e.target.value }))} placeholder="0.00" className={inputCls + ' w-full'} required />
               </div>
-
               <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1">Beneficiario</label>
-                <input
-                  type="text"
-                  value={form.beneficiario}
-                  onChange={e => setForm(f => ({ ...f, beneficiario: e.target.value }))}
-                  placeholder="Nombre del beneficiario (opcional)"
-                  className={inputCls + ' w-full'}
-                />
+                <label className="block text-xs font-medium text-slate-600 mb-1">Beneficiario</label>
+                <input type="text" value={form.beneficiario} onChange={e => setForm(f => ({ ...f, beneficiario: e.target.value }))} placeholder="Nombre del beneficiario (opcional)" className={inputCls + ' w-full'} />
               </div>
-
               <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1">Socio (opcional)</label>
-                <SocioSearch
-                  value={form.id_socio}
-                  onChange={(id, label) => setForm(f => ({ ...f, id_socio: id, socioLabel: label }))}
-                />
+                <label className="block text-xs font-medium text-slate-600 mb-1">Socio (opcional)</label>
+                <SocioSearch value={form.id_socio} onChange={(id, label) => setForm(f => ({ ...f, id_socio: id, socioLabel: label }))} />
               </div>
-
               <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1">Descripción</label>
-                <textarea
-                  value={form.descripcion}
-                  onChange={e => setForm(f => ({ ...f, descripcion: e.target.value }))}
-                  placeholder="Descripción adicional (opcional)"
-                  rows={2}
-                  className={inputCls + ' w-full resize-none'}
-                />
+                <label className="block text-xs font-medium text-slate-600 mb-1">Descripción</label>
+                <textarea value={form.descripcion} onChange={e => setForm(f => ({ ...f, descripcion: e.target.value }))} placeholder="Descripción adicional (opcional)" rows={2} className={inputCls + ' w-full resize-none'} />
               </div>
-
               {formError && (
                 <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{formError}</p>
               )}
-
-              <div className="flex justify-end gap-3 pt-2">
-                <button
-                  type="button"
-                  onClick={closeModal}
-                  className="px-4 py-2 text-sm font-medium border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="submit"
-                  disabled={saving}
-                  className="px-4 py-2 text-sm font-medium text-white rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
-                  style={{ backgroundColor: '#1e3a5f' }}
-                >
+              <div className="flex justify-end gap-3 pt-2 border-t border-slate-100">
+                <button type="button" onClick={closeModal} className={btnGhost}>Cancelar</button>
+                <button type="submit" disabled={saving} className={`${btnPrimary} disabled:opacity-50`}>
                   {saving ? 'Guardando...' : editando ? 'Guardar cambios' : 'Registrar egreso'}
                 </button>
               </div>
@@ -487,26 +422,16 @@ export default function EgresosPage() {
       {/* Modal confirmación de eliminación */}
       {confirmDelete !== null && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm mx-4 p-6">
-            <h2 className="text-base font-semibold text-gray-800 mb-2">¿Eliminar egreso?</h2>
-            <p className="text-sm text-gray-500 mb-5">Esta acción no se puede deshacer.</p>
+          <div className="bg-white rounded-2xl border border-slate-200 w-full max-w-sm mx-4 p-6">
+            <h2 className="text-base font-semibold text-slate-800 mb-2">¿Eliminar egreso?</h2>
+            <p className="text-sm text-slate-500 mb-5">Esta acción no se puede deshacer.</p>
             <div className="flex justify-end gap-3">
-              <button
-                onClick={() => setConfirmDelete(null)}
-                className="px-4 py-2 text-sm font-medium border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={() => handleDelete(confirmDelete)}
-                className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors"
-              >
-                Eliminar
-              </button>
+              <button onClick={() => setConfirmDelete(null)} className={btnGhost}>Cancelar</button>
+              <button onClick={() => handleDelete(confirmDelete)} className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors">Eliminar</button>
             </div>
           </div>
         </div>
       )}
-    </div>
+    </PageFrame>
   )
 }

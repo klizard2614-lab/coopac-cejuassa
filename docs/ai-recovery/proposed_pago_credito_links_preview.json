@@ -1,0 +1,2755 @@
+{
+  "generated_at": "2026-06-22T19:53:32.065Z",
+  "fase": "9C-6E",
+  "modo": "DRY-RUN — SOLO LECTURA",
+  "nota": "Todos los IDs están enmascarados. No ejecutar update sin autorización explícita.",
+  "totales": {
+    "pagos_null_credito": 804,
+    "match_alto": 0,
+    "match_medio": 3,
+    "ambiguo": 0,
+    "no_aplica_credito": 417,
+    "sin_match": 384
+  },
+  "grupos": {
+    "A_capital_interes": 34,
+    "B_solo_aporte": 406,
+    "C_fps_otros": 11,
+    "D_mixto": 311,
+    "E_tipo_k": 42,
+    "F_sin_info": 0
+  },
+  "recomendacion": "⚠️  REVISIÓN MANUAL recomendada antes de apply — proporción de casos inciertos es alta.",
+  "links_propuestos": [
+    {
+      "pago_id_masked": "412****",
+      "id_socio_masked": "3336****",
+      "fecha": "2026-03-04",
+      "periodo": "2026-03",
+      "monto_capital": 463.82,
+      "monto_interes": 36.18,
+      "monto_aporte": 0,
+      "grupo": "A",
+      "categoria": "match_medio",
+      "credito_id_masked": "1147****",
+      "razon": "único crédito del socio (fuera de rango fecha, estado: vigente)"
+    },
+    {
+      "pago_id_masked": "413****",
+      "id_socio_masked": "3336****",
+      "fecha": "2026-03-04",
+      "periodo": "2026-03",
+      "monto_capital": 150,
+      "monto_interes": 0,
+      "monto_aporte": 0,
+      "grupo": "A",
+      "categoria": "match_medio",
+      "credito_id_masked": "1147****",
+      "razon": "único crédito del socio (fuera de rango fecha, estado: vigente)"
+    },
+    {
+      "pago_id_masked": "422****",
+      "id_socio_masked": "3344****",
+      "fecha": "2026-03-25",
+      "periodo": "2026-03",
+      "monto_capital": 0,
+      "monto_interes": 100,
+      "monto_aporte": 0,
+      "grupo": "A",
+      "categoria": "match_medio",
+      "credito_id_masked": "1159****",
+      "razon": "único crédito del socio (fuera de rango fecha, estado: vigente)"
+    }
+  ],
+  "casos_ambiguos": [],
+  "sin_match": [
+    {
+      "pago_id_masked": "405****",
+      "id_socio_masked": "3329****",
+      "fecha": "2026-03-02",
+      "grupo": "E",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "406****",
+      "id_socio_masked": "3330****",
+      "fecha": "2026-03-02",
+      "grupo": "A",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "407****",
+      "id_socio_masked": "3331****",
+      "fecha": "2026-03-02",
+      "grupo": "A",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "408****",
+      "id_socio_masked": "3332****",
+      "fecha": "2026-03-02",
+      "grupo": "A",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "409****",
+      "id_socio_masked": "3333****",
+      "fecha": "2026-03-03",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "410****",
+      "id_socio_masked": "3334****",
+      "fecha": "2026-03-03",
+      "grupo": "E",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "414****",
+      "id_socio_masked": "3337****",
+      "fecha": "2026-03-05",
+      "grupo": "A",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "415****",
+      "id_socio_masked": "3338****",
+      "fecha": "2026-03-10",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "416****",
+      "id_socio_masked": "3339****",
+      "fecha": "2026-03-19",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "420****",
+      "id_socio_masked": "3342****",
+      "fecha": "2026-03-23",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "421****",
+      "id_socio_masked": "3343****",
+      "fecha": "2026-03-23",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "423****",
+      "id_socio_masked": "3329****",
+      "fecha": "2026-03-26",
+      "grupo": "E",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "424****",
+      "id_socio_masked": "3345****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "426****",
+      "id_socio_masked": "3347****",
+      "fecha": "2026-03-27",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "427****",
+      "id_socio_masked": "3348****",
+      "fecha": "2026-03-27",
+      "grupo": "A",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "428****",
+      "id_socio_masked": "3349****",
+      "fecha": "2026-03-30",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "429****",
+      "id_socio_masked": "3330****",
+      "fecha": "2026-03-30",
+      "grupo": "A",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "432****",
+      "id_socio_masked": "3352****",
+      "fecha": "2026-03-30",
+      "grupo": "A",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "433****",
+      "id_socio_masked": "3353****",
+      "fecha": "2026-03-30",
+      "grupo": "A",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "434****",
+      "id_socio_masked": "3354****",
+      "fecha": "2026-03-30",
+      "grupo": "A",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "435****",
+      "id_socio_masked": "3354****",
+      "fecha": "2026-03-30",
+      "grupo": "A",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "436****",
+      "id_socio_masked": "3355****",
+      "fecha": "2026-03-31",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "437****",
+      "id_socio_masked": "3356****",
+      "fecha": "2026-03-31",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "439****",
+      "id_socio_masked": "3358****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "442****",
+      "id_socio_masked": "3345****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "444****",
+      "id_socio_masked": "3362****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "445****",
+      "id_socio_masked": "3363****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "446****",
+      "id_socio_masked": "3364****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "456****",
+      "id_socio_masked": "3374****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "469****",
+      "id_socio_masked": "3387****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "474****",
+      "id_socio_masked": "3391****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "478****",
+      "id_socio_masked": "3395****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "481****",
+      "id_socio_masked": "3398****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "485****",
+      "id_socio_masked": "3402****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "491****",
+      "id_socio_masked": "3408****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "494****",
+      "id_socio_masked": "3411****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "495****",
+      "id_socio_masked": "3412****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "498****",
+      "id_socio_masked": "3415****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "507****",
+      "id_socio_masked": "3424****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "509****",
+      "id_socio_masked": "3426****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "510****",
+      "id_socio_masked": "3427****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "511****",
+      "id_socio_masked": "3428****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "516****",
+      "id_socio_masked": "3433****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "520****",
+      "id_socio_masked": "3437****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "521****",
+      "id_socio_masked": "3438****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "526****",
+      "id_socio_masked": "3443****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "527****",
+      "id_socio_masked": "3444****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "533****",
+      "id_socio_masked": "3450****",
+      "fecha": "2026-03-25",
+      "grupo": "A",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "535****",
+      "id_socio_masked": "3451****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "540****",
+      "id_socio_masked": "3456****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "541****",
+      "id_socio_masked": "3457****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "542****",
+      "id_socio_masked": "3458****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "544****",
+      "id_socio_masked": "3460****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "545****",
+      "id_socio_masked": "3461****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "546****",
+      "id_socio_masked": "3462****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "548****",
+      "id_socio_masked": "3464****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "559****",
+      "id_socio_masked": "3473****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "560****",
+      "id_socio_masked": "3474****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "562****",
+      "id_socio_masked": "3476****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "564****",
+      "id_socio_masked": "3478****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "566****",
+      "id_socio_masked": "3480****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "567****",
+      "id_socio_masked": "3481****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "568****",
+      "id_socio_masked": "3482****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "569****",
+      "id_socio_masked": "3483****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "572****",
+      "id_socio_masked": "3486****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "574****",
+      "id_socio_masked": "3488****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "576****",
+      "id_socio_masked": "3490****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "577****",
+      "id_socio_masked": "3491****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "579****",
+      "id_socio_masked": "3355****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "580****",
+      "id_socio_masked": "3493****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "581****",
+      "id_socio_masked": "3494****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "583****",
+      "id_socio_masked": "3496****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "584****",
+      "id_socio_masked": "3497****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "585****",
+      "id_socio_masked": "3498****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "590****",
+      "id_socio_masked": "3502****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "593****",
+      "id_socio_masked": "3505****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "599****",
+      "id_socio_masked": "3511****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "601****",
+      "id_socio_masked": "3352****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "602****",
+      "id_socio_masked": "3513****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "604****",
+      "id_socio_masked": "3515****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "610****",
+      "id_socio_masked": "3521****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "611****",
+      "id_socio_masked": "3522****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "613****",
+      "id_socio_masked": "3524****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "617****",
+      "id_socio_masked": "3528****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "618****",
+      "id_socio_masked": "3529****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "621****",
+      "id_socio_masked": "3532****",
+      "fecha": "2026-03-25",
+      "grupo": "E",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "622****",
+      "id_socio_masked": "3533****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "627****",
+      "id_socio_masked": "3537****",
+      "fecha": "2026-03-25",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "629****",
+      "id_socio_masked": "3539****",
+      "fecha": "2026-03-25",
+      "grupo": "E",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "631****",
+      "id_socio_masked": "3541****",
+      "fecha": "2026-03-25",
+      "grupo": "E",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "632****",
+      "id_socio_masked": "3542****",
+      "fecha": "2026-03-25",
+      "grupo": "E",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "633****",
+      "id_socio_masked": "3543****",
+      "fecha": "2026-03-25",
+      "grupo": "E",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "635****",
+      "id_socio_masked": "3545****",
+      "fecha": "2026-03-25",
+      "grupo": "E",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "636****",
+      "id_socio_masked": "3533****",
+      "fecha": "2026-03-25",
+      "grupo": "A",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "638****",
+      "id_socio_masked": "3534****",
+      "fecha": "2026-03-25",
+      "grupo": "A",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "639****",
+      "id_socio_masked": "3537****",
+      "fecha": "2026-03-25",
+      "grupo": "A",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "640****",
+      "id_socio_masked": "3402****",
+      "fecha": "2026-03-25",
+      "grupo": "A",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "650****",
+      "id_socio_masked": "3555****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "653****",
+      "id_socio_masked": "3558****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "658****",
+      "id_socio_masked": "3563****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "660****",
+      "id_socio_masked": "3565****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "661****",
+      "id_socio_masked": "3566****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "662****",
+      "id_socio_masked": "3567****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "663****",
+      "id_socio_masked": "3568****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "664****",
+      "id_socio_masked": "3569****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "667****",
+      "id_socio_masked": "3572****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "669****",
+      "id_socio_masked": "3574****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "670****",
+      "id_socio_masked": "3575****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "671****",
+      "id_socio_masked": "3576****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "674****",
+      "id_socio_masked": "3579****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "675****",
+      "id_socio_masked": "3580****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "680****",
+      "id_socio_masked": "3585****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "681****",
+      "id_socio_masked": "3586****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "684****",
+      "id_socio_masked": "3589****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "685****",
+      "id_socio_masked": "3590****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "686****",
+      "id_socio_masked": "3591****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "689****",
+      "id_socio_masked": "3594****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "690****",
+      "id_socio_masked": "3595****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "692****",
+      "id_socio_masked": "3597****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "695****",
+      "id_socio_masked": "3600****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "699****",
+      "id_socio_masked": "3604****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "700****",
+      "id_socio_masked": "3605****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "702****",
+      "id_socio_masked": "3607****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "703****",
+      "id_socio_masked": "3608****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "706****",
+      "id_socio_masked": "3611****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "707****",
+      "id_socio_masked": "3612****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "709****",
+      "id_socio_masked": "3614****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "710****",
+      "id_socio_masked": "3615****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "712****",
+      "id_socio_masked": "3617****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "715****",
+      "id_socio_masked": "3620****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "716****",
+      "id_socio_masked": "3621****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "717****",
+      "id_socio_masked": "3622****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "718****",
+      "id_socio_masked": "3623****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "719****",
+      "id_socio_masked": "3624****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "720****",
+      "id_socio_masked": "3625****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "723****",
+      "id_socio_masked": "3627****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "726****",
+      "id_socio_masked": "3630****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "727****",
+      "id_socio_masked": "3631****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "736****",
+      "id_socio_masked": "3640****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "744****",
+      "id_socio_masked": "3648****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "745****",
+      "id_socio_masked": "3649****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "746****",
+      "id_socio_masked": "3650****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "748****",
+      "id_socio_masked": "3652****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "749****",
+      "id_socio_masked": "3653****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "750****",
+      "id_socio_masked": "3654****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "751****",
+      "id_socio_masked": "3334****",
+      "fecha": "2026-03-26",
+      "grupo": "E",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "753****",
+      "id_socio_masked": "3349****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "754****",
+      "id_socio_masked": "3656****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "757****",
+      "id_socio_masked": "3659****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "758****",
+      "id_socio_masked": "3660****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "759****",
+      "id_socio_masked": "3661****",
+      "fecha": "2026-03-26",
+      "grupo": "E",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "760****",
+      "id_socio_masked": "3662****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "761****",
+      "id_socio_masked": "3663****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "762****",
+      "id_socio_masked": "3664****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "763****",
+      "id_socio_masked": "3665****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "764****",
+      "id_socio_masked": "3666****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "765****",
+      "id_socio_masked": "3667****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "766****",
+      "id_socio_masked": "3668****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "767****",
+      "id_socio_masked": "3669****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "769****",
+      "id_socio_masked": "3671****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "770****",
+      "id_socio_masked": "3672****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "772****",
+      "id_socio_masked": "3674****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "774****",
+      "id_socio_masked": "3676****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "776****",
+      "id_socio_masked": "3678****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "777****",
+      "id_socio_masked": "3679****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "779****",
+      "id_socio_masked": "3681****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "782****",
+      "id_socio_masked": "3684****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "783****",
+      "id_socio_masked": "3685****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "785****",
+      "id_socio_masked": "3687****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "786****",
+      "id_socio_masked": "3688****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "789****",
+      "id_socio_masked": "3691****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "794****",
+      "id_socio_masked": "3696****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "796****",
+      "id_socio_masked": "3698****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "800****",
+      "id_socio_masked": "3702****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "801****",
+      "id_socio_masked": "3703****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "803****",
+      "id_socio_masked": "3705****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "805****",
+      "id_socio_masked": "3707****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "808****",
+      "id_socio_masked": "3710****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "810****",
+      "id_socio_masked": "3712****",
+      "fecha": "2026-03-26",
+      "grupo": "E",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "811****",
+      "id_socio_masked": "3713****",
+      "fecha": "2026-03-26",
+      "grupo": "E",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "812****",
+      "id_socio_masked": "3714****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "817****",
+      "id_socio_masked": "3718****",
+      "fecha": "2026-03-26",
+      "grupo": "E",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "819****",
+      "id_socio_masked": "3720****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "823****",
+      "id_socio_masked": "3724****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "824****",
+      "id_socio_masked": "3725****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "825****",
+      "id_socio_masked": "3726****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "826****",
+      "id_socio_masked": "3727****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "827****",
+      "id_socio_masked": "3728****",
+      "fecha": "2026-03-26",
+      "grupo": "E",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "829****",
+      "id_socio_masked": "3730****",
+      "fecha": "2026-03-26",
+      "grupo": "E",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "831****",
+      "id_socio_masked": "3732****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "832****",
+      "id_socio_masked": "3733****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "835****",
+      "id_socio_masked": "3347****",
+      "fecha": "2026-03-27",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "836****",
+      "id_socio_masked": "3736****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "838****",
+      "id_socio_masked": "3737****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "839****",
+      "id_socio_masked": "3738****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "841****",
+      "id_socio_masked": "3740****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "843****",
+      "id_socio_masked": "3742****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "844****",
+      "id_socio_masked": "3743****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "845****",
+      "id_socio_masked": "3744****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "848****",
+      "id_socio_masked": "3747****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "851****",
+      "id_socio_masked": "3750****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "853****",
+      "id_socio_masked": "3752****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "855****",
+      "id_socio_masked": "3754****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "857****",
+      "id_socio_masked": "3755****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "860****",
+      "id_socio_masked": "3758****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "861****",
+      "id_socio_masked": "3759****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "864****",
+      "id_socio_masked": "3762****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "866****",
+      "id_socio_masked": "3764****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "868****",
+      "id_socio_masked": "3766****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "874****",
+      "id_socio_masked": "3772****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "876****",
+      "id_socio_masked": "3774****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "878****",
+      "id_socio_masked": "3776****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "880****",
+      "id_socio_masked": "3778****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "888****",
+      "id_socio_masked": "3786****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "894****",
+      "id_socio_masked": "3792****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "895****",
+      "id_socio_masked": "3793****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "898****",
+      "id_socio_masked": "3796****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "904****",
+      "id_socio_masked": "3802****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "908****",
+      "id_socio_masked": "3806****",
+      "fecha": "2026-03-26",
+      "grupo": "E",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "911****",
+      "id_socio_masked": "3809****",
+      "fecha": "2026-03-26",
+      "grupo": "E",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "913****",
+      "id_socio_masked": "3811****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "917****",
+      "id_socio_masked": "3814****",
+      "fecha": "2026-03-26",
+      "grupo": "E",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "918****",
+      "id_socio_masked": "3815****",
+      "fecha": "2026-03-26",
+      "grupo": "E",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "919****",
+      "id_socio_masked": "3789****",
+      "fecha": "2026-03-26",
+      "grupo": "A",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "920****",
+      "id_socio_masked": "3792****",
+      "fecha": "2026-03-26",
+      "grupo": "A",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "921****",
+      "id_socio_masked": "3795****",
+      "fecha": "2026-03-26",
+      "grupo": "A",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "922****",
+      "id_socio_masked": "3796****",
+      "fecha": "2026-03-26",
+      "grupo": "A",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "923****",
+      "id_socio_masked": "3797****",
+      "fecha": "2026-03-26",
+      "grupo": "A",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "924****",
+      "id_socio_masked": "3798****",
+      "fecha": "2026-03-26",
+      "grupo": "A",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "925****",
+      "id_socio_masked": "3799****",
+      "fecha": "2026-03-26",
+      "grupo": "A",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "926****",
+      "id_socio_masked": "3801****",
+      "fecha": "2026-03-26",
+      "grupo": "A",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "927****",
+      "id_socio_masked": "3804****",
+      "fecha": "2026-03-26",
+      "grupo": "A",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "928****",
+      "id_socio_masked": "3807****",
+      "fecha": "2026-03-26",
+      "grupo": "A",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "929****",
+      "id_socio_masked": "3810****",
+      "fecha": "2026-03-26",
+      "grupo": "A",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "930****",
+      "id_socio_masked": "3812****",
+      "fecha": "2026-03-26",
+      "grupo": "A",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "931****",
+      "id_socio_masked": "3811****",
+      "fecha": "2026-03-26",
+      "grupo": "A",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "933****",
+      "id_socio_masked": "3817****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "935****",
+      "id_socio_masked": "3819****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "936****",
+      "id_socio_masked": "3820****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "938****",
+      "id_socio_masked": "3822****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "940****",
+      "id_socio_masked": "3823****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "941****",
+      "id_socio_masked": "3824****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "942****",
+      "id_socio_masked": "3825****",
+      "fecha": "2026-03-26",
+      "grupo": "E",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "943****",
+      "id_socio_masked": "3337****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "944****",
+      "id_socio_masked": "3826****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "947****",
+      "id_socio_masked": "3829****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "948****",
+      "id_socio_masked": "3830****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "949****",
+      "id_socio_masked": "3831****",
+      "fecha": "2026-03-26",
+      "grupo": "E",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "950****",
+      "id_socio_masked": "3827****",
+      "fecha": "2026-03-26",
+      "grupo": "A",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "951****",
+      "id_socio_masked": "3832****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "955****",
+      "id_socio_masked": "3836****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "956****",
+      "id_socio_masked": "3837****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "957****",
+      "id_socio_masked": "3838****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "966****",
+      "id_socio_masked": "3847****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "968****",
+      "id_socio_masked": "3849****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "969****",
+      "id_socio_masked": "3850****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "971****",
+      "id_socio_masked": "3852****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "972****",
+      "id_socio_masked": "3853****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "973****",
+      "id_socio_masked": "3854****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "974****",
+      "id_socio_masked": "3855****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "975****",
+      "id_socio_masked": "3856****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "977****",
+      "id_socio_masked": "3858****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "978****",
+      "id_socio_masked": "3859****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "979****",
+      "id_socio_masked": "3860****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "980****",
+      "id_socio_masked": "3861****",
+      "fecha": "2026-03-26",
+      "grupo": "E",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "984****",
+      "id_socio_masked": "3865****",
+      "fecha": "2026-03-26",
+      "grupo": "E",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "985****",
+      "id_socio_masked": "3866****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "986****",
+      "id_socio_masked": "3867****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "987****",
+      "id_socio_masked": "3868****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "990****",
+      "id_socio_masked": "3871****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "993****",
+      "id_socio_masked": "3874****",
+      "fecha": "2026-03-26",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "996****",
+      "id_socio_masked": "3877****",
+      "fecha": "2026-03-27",
+      "grupo": "E",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "997****",
+      "id_socio_masked": "3878****",
+      "fecha": "2026-03-27",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1000****",
+      "id_socio_masked": "3881****",
+      "fecha": "2026-03-27",
+      "grupo": "E",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1001****",
+      "id_socio_masked": "3882****",
+      "fecha": "2026-03-27",
+      "grupo": "E",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1005****",
+      "id_socio_masked": "3885****",
+      "fecha": "2026-03-27",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1008****",
+      "id_socio_masked": "3888****",
+      "fecha": "2026-03-27",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1009****",
+      "id_socio_masked": "3889****",
+      "fecha": "2026-03-27",
+      "grupo": "E",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1010****",
+      "id_socio_masked": "3890****",
+      "fecha": "2026-03-27",
+      "grupo": "E",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1011****",
+      "id_socio_masked": "3891****",
+      "fecha": "2026-03-27",
+      "grupo": "E",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1012****",
+      "id_socio_masked": "3892****",
+      "fecha": "2026-03-27",
+      "grupo": "E",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1013****",
+      "id_socio_masked": "3893****",
+      "fecha": "2026-03-27",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1015****",
+      "id_socio_masked": "3895****",
+      "fecha": "2026-03-27",
+      "grupo": "E",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1025****",
+      "id_socio_masked": "3905****",
+      "fecha": "2026-03-27",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1026****",
+      "id_socio_masked": "3906****",
+      "fecha": "2026-03-27",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1031****",
+      "id_socio_masked": "3911****",
+      "fecha": "2026-03-27",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1032****",
+      "id_socio_masked": "3912****",
+      "fecha": "2026-03-27",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1034****",
+      "id_socio_masked": "3914****",
+      "fecha": "2026-03-27",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1036****",
+      "id_socio_masked": "3916****",
+      "fecha": "2026-03-27",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1038****",
+      "id_socio_masked": "3918****",
+      "fecha": "2026-03-27",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1041****",
+      "id_socio_masked": "3921****",
+      "fecha": "2026-03-27",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1047****",
+      "id_socio_masked": "3927****",
+      "fecha": "2026-03-27",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1049****",
+      "id_socio_masked": "3929****",
+      "fecha": "2026-03-27",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1050****",
+      "id_socio_masked": "3930****",
+      "fecha": "2026-03-27",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1051****",
+      "id_socio_masked": "3931****",
+      "fecha": "2026-03-27",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1053****",
+      "id_socio_masked": "3933****",
+      "fecha": "2026-03-27",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1054****",
+      "id_socio_masked": "3934****",
+      "fecha": "2026-03-27",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1060****",
+      "id_socio_masked": "3940****",
+      "fecha": "2026-03-27",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1062****",
+      "id_socio_masked": "3942****",
+      "fecha": "2026-03-27",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1064****",
+      "id_socio_masked": "3944****",
+      "fecha": "2026-03-27",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1070****",
+      "id_socio_masked": "3950****",
+      "fecha": "2026-03-27",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1079****",
+      "id_socio_masked": "3958****",
+      "fecha": "2026-03-27",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1088****",
+      "id_socio_masked": "3967****",
+      "fecha": "2026-03-27",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1091****",
+      "id_socio_masked": "3970****",
+      "fecha": "2026-03-27",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1092****",
+      "id_socio_masked": "3971****",
+      "fecha": "2026-03-27",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1094****",
+      "id_socio_masked": "3973****",
+      "fecha": "2026-03-27",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1096****",
+      "id_socio_masked": "3975****",
+      "fecha": "2026-03-27",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1097****",
+      "id_socio_masked": "3976****",
+      "fecha": "2026-03-27",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1100****",
+      "id_socio_masked": "3979****",
+      "fecha": "2026-03-27",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1103****",
+      "id_socio_masked": "3982****",
+      "fecha": "2026-03-27",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1105****",
+      "id_socio_masked": "3984****",
+      "fecha": "2026-03-27",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1109****",
+      "id_socio_masked": "3988****",
+      "fecha": "2026-03-27",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1110****",
+      "id_socio_masked": "3989****",
+      "fecha": "2026-03-27",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1111****",
+      "id_socio_masked": "3990****",
+      "fecha": "2026-03-27",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1112****",
+      "id_socio_masked": "3991****",
+      "fecha": "2026-03-27",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1113****",
+      "id_socio_masked": "3992****",
+      "fecha": "2026-03-27",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1114****",
+      "id_socio_masked": "3993****",
+      "fecha": "2026-03-27",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1115****",
+      "id_socio_masked": "3994****",
+      "fecha": "2026-03-27",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1119****",
+      "id_socio_masked": "3998****",
+      "fecha": "2026-03-27",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1122****",
+      "id_socio_masked": "4001****",
+      "fecha": "2026-03-27",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1127****",
+      "id_socio_masked": "4004****",
+      "fecha": "2026-03-27",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1129****",
+      "id_socio_masked": "4007****",
+      "fecha": "2026-03-30",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1130****",
+      "id_socio_masked": "4008****",
+      "fecha": "2026-03-30",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1132****",
+      "id_socio_masked": "4010****",
+      "fecha": "2026-03-30",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1135****",
+      "id_socio_masked": "4013****",
+      "fecha": "2026-03-30",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1136****",
+      "id_socio_masked": "4014****",
+      "fecha": "2026-03-30",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1137****",
+      "id_socio_masked": "4015****",
+      "fecha": "2026-03-30",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1138****",
+      "id_socio_masked": "4016****",
+      "fecha": "2026-03-30",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1139****",
+      "id_socio_masked": "4017****",
+      "fecha": "2026-03-30",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1140****",
+      "id_socio_masked": "4018****",
+      "fecha": "2026-03-30",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1142****",
+      "id_socio_masked": "4020****",
+      "fecha": "2026-03-30",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1144****",
+      "id_socio_masked": "4022****",
+      "fecha": "2026-03-30",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1146****",
+      "id_socio_masked": "4024****",
+      "fecha": "2026-03-30",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1147****",
+      "id_socio_masked": "4025****",
+      "fecha": "2026-03-30",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1148****",
+      "id_socio_masked": "4026****",
+      "fecha": "2026-03-30",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1149****",
+      "id_socio_masked": "4027****",
+      "fecha": "2026-03-30",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1150****",
+      "id_socio_masked": "4028****",
+      "fecha": "2026-03-30",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1151****",
+      "id_socio_masked": "4029****",
+      "fecha": "2026-03-30",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1154****",
+      "id_socio_masked": "4032****",
+      "fecha": "2026-03-30",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1155****",
+      "id_socio_masked": "4033****",
+      "fecha": "2026-03-30",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1156****",
+      "id_socio_masked": "4034****",
+      "fecha": "2026-03-30",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1159****",
+      "id_socio_masked": "4037****",
+      "fecha": "2026-03-30",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1163****",
+      "id_socio_masked": "4041****",
+      "fecha": "2026-03-30",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1164****",
+      "id_socio_masked": "4042****",
+      "fecha": "2026-03-30",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1165****",
+      "id_socio_masked": "4043****",
+      "fecha": "2026-03-30",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1167****",
+      "id_socio_masked": "4045****",
+      "fecha": "2026-03-30",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1169****",
+      "id_socio_masked": "4047****",
+      "fecha": "2026-03-30",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1171****",
+      "id_socio_masked": "4049****",
+      "fecha": "2026-03-30",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1174****",
+      "id_socio_masked": "4052****",
+      "fecha": "2026-03-30",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1177****",
+      "id_socio_masked": "4054****",
+      "fecha": "2026-03-30",
+      "grupo": "A",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1178****",
+      "id_socio_masked": "4055****",
+      "fecha": "2026-03-31",
+      "grupo": "E",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1179****",
+      "id_socio_masked": "4056****",
+      "fecha": "2026-03-31",
+      "grupo": "E",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1181****",
+      "id_socio_masked": "4058****",
+      "fecha": "2026-03-31",
+      "grupo": "E",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1182****",
+      "id_socio_masked": "4059****",
+      "fecha": "2026-03-31",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1184****",
+      "id_socio_masked": "4061****",
+      "fecha": "2026-03-31",
+      "grupo": "E",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1185****",
+      "id_socio_masked": "4062****",
+      "fecha": "2026-03-31",
+      "grupo": "E",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1186****",
+      "id_socio_masked": "4063****",
+      "fecha": "2026-03-31",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1188****",
+      "id_socio_masked": "4065****",
+      "fecha": "2026-03-31",
+      "grupo": "E",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1189****",
+      "id_socio_masked": "4066****",
+      "fecha": "2026-03-31",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1190****",
+      "id_socio_masked": "4067****",
+      "fecha": "2026-03-31",
+      "grupo": "E",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1191****",
+      "id_socio_masked": "4068****",
+      "fecha": "2026-03-31",
+      "grupo": "E",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1193****",
+      "id_socio_masked": "4070****",
+      "fecha": "2026-03-31",
+      "grupo": "E",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1194****",
+      "id_socio_masked": "4071****",
+      "fecha": "2026-03-31",
+      "grupo": "E",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1200****",
+      "id_socio_masked": "4076****",
+      "fecha": "2026-03-31",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1202****",
+      "id_socio_masked": "4078****",
+      "fecha": "2026-03-31",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1206****",
+      "id_socio_masked": "4082****",
+      "fecha": "2026-03-31",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1207****",
+      "id_socio_masked": "4083****",
+      "fecha": "2026-03-31",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1209****",
+      "id_socio_masked": "4085****",
+      "fecha": "2026-03-31",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1210****",
+      "id_socio_masked": "4086****",
+      "fecha": "2026-03-31",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1212****",
+      "id_socio_masked": "4088****",
+      "fecha": "2026-03-31",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1213****",
+      "id_socio_masked": "4089****",
+      "fecha": "2026-03-31",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1215****",
+      "id_socio_masked": "4091****",
+      "fecha": "2026-03-31",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1216****",
+      "id_socio_masked": "3348****",
+      "fecha": "2026-03-31",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1218****",
+      "id_socio_masked": "4093****",
+      "fecha": "2026-03-31",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1219****",
+      "id_socio_masked": "3973****",
+      "fecha": "2026-03-27",
+      "grupo": "A",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1223****",
+      "id_socio_masked": "4097****",
+      "fecha": "2026-03-31",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1224****",
+      "id_socio_masked": "4098****",
+      "fecha": "2026-03-31",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1225****",
+      "id_socio_masked": "4099****",
+      "fecha": "2026-03-31",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1226****",
+      "id_socio_masked": "4100****",
+      "fecha": "2026-03-31",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1228****",
+      "id_socio_masked": "4102****",
+      "fecha": "2026-03-31",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1230****",
+      "id_socio_masked": "4104****",
+      "fecha": "2026-03-31",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1231****",
+      "id_socio_masked": "4105****",
+      "fecha": "2026-03-31",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1235****",
+      "id_socio_masked": "4108****",
+      "fecha": "2026-03-31",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    },
+    {
+      "pago_id_masked": "1236****",
+      "id_socio_masked": "4109****",
+      "fecha": "2026-03-31",
+      "grupo": "D",
+      "razon": "socio sin créditos en DB"
+    }
+  ]
+}

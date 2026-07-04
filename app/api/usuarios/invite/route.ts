@@ -1,82 +1,60 @@
-import { createClient } from '@supabase/supabase-js'
-import { createServerClient } from '@supabase/ssr'
-import { cookies } from 'next/headers'
+import { requireAdmin } from '@/lib/api/requireAdmin'
+import { apiError, apiSuccess } from '@/lib/api/errors'
 
-function getAdminClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
-  if (!url || !key) throw new Error('Faltan variables de entorno de Supabase')
-  return createClient(url, key, { auth: { autoRefreshToken: false, persistSession: false } })
-}
-
-async function getCallerRol(): Promise<string | null> {
-  const cookieStore = await cookies()
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() { return cookieStore.getAll() },
-        setAll() {},
-      },
-    }
-  )
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return null
-  const { data } = await supabase
-    .from('usuarios')
-    .select('rol')
-    .eq('id', user.id)
-    .maybeSingle()
-  return data?.rol ?? null
-}
+const ROLES_VALIDOS = ['admin', 'tesoreria', 'creditos', 'contabilidad'] as const
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 export async function POST(request: Request) {
   try {
-    const callerRol = await getCallerRol()
-    if (!callerRol) return Response.json({ error: 'No autenticado' }, { status: 401 })
-    if (callerRol !== 'admin') return Response.json({ error: 'Se requiere rol admin' }, { status: 403 })
+    const auth = await requireAdmin(request)
+    if (auth instanceof Response) return auth
+    const { adminClient } = auth
 
     const { email, rol, nombre } = await request.json()
 
     if (!email || !rol) {
-      return Response.json({ error: 'email y rol son requeridos' }, { status: 400 })
+      return apiError(400, 'Solicitud inválida.')
+    }
+    if (!EMAIL_REGEX.test(String(email))) {
+      return apiError(400, 'Solicitud inválida.')
+    }
+    if (!ROLES_VALIDOS.includes(rol)) {
+      return apiError(400, 'Solicitud inválida.')
     }
 
-    const supabaseAdmin = getAdminClient()
-
-    const { data, error: inviteError } = await supabaseAdmin.auth.admin.inviteUserByEmail(email)
+    const { data, error: inviteError } = await adminClient.auth.admin.inviteUserByEmail(email)
     if (inviteError) {
-      return Response.json({ error: inviteError.message }, { status: 400 })
+      return apiError(400, 'No se pudo crear el usuario.', inviteError)
     }
 
     const userId = data.user?.id
     if (!userId) {
-      return Response.json({ error: 'No se obtuvo ID del usuario invitado' }, { status: 500 })
+      return apiError(500, 'No se pudo crear el usuario.')
     }
 
-    const { data: existing } = await supabaseAdmin
+    const nombreTrimmed = nombre ? String(nombre).trim().slice(0, 200) : ''
+
+    const { data: existing } = await adminClient
       .from('usuarios')
       .select('id')
       .eq('id', userId)
       .maybeSingle()
 
     if (existing) {
-      const { error: updateError } = await supabaseAdmin
+      const { error: updateError } = await adminClient
         .from('usuarios')
-        .update({ rol, nombre: nombre?.trim() || '', activo: true, updated_at: new Date().toISOString() })
+        .update({ rol, nombre: nombreTrimmed, activo: true, updated_at: new Date().toISOString() })
         .eq('id', userId)
-      if (updateError) return Response.json({ error: updateError.message }, { status: 400 })
+      if (updateError) return apiError(400, 'No se pudo crear el usuario.', updateError)
     } else {
-      const { error: insertError } = await supabaseAdmin
+      const { error: insertError } = await adminClient
         .from('usuarios')
-        .insert({ id: userId, auth_id: userId, nombre: nombre?.trim() || '', email, rol, activo: true })
-      if (insertError) return Response.json({ error: insertError.message }, { status: 400 })
+        .insert({ id: userId, auth_id: userId, nombre: nombreTrimmed, email, rol, activo: true })
+      if (insertError) return apiError(400, 'No se pudo crear el usuario.', insertError)
     }
 
-    return Response.json({ success: true, userId })
+    return apiSuccess({ userId })
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Error interno'
-    return Response.json({ error: message }, { status: 500 })
+    return apiError(500, 'Error interno del servidor.', err)
   }
 }

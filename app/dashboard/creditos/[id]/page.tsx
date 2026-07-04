@@ -4,6 +4,9 @@ import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase'
+import { AmpliacionesSection } from '../_components/AmpliacionesSection'
+import { formatNombrePersona } from '@/lib/formatNombre'
+import { PageFrame, DetailHero, DetailSection, FieldGrid, FieldItem, StatusBadge, btnEdit, btnGhost } from '../../_components/ui'
 
 type Cuota = {
   id: string
@@ -46,18 +49,14 @@ type Credito = {
 // ── Badges ───────────────────────────────────────────────────────────────────
 
 function CreditoBadge({ estado }: { estado: string }) {
-  const map: Record<string, { bg: string; text: string; label: string }> = {
-    vigente:      { bg: 'bg-green-100',  text: 'text-green-800',  label: 'Vigente' },
-    cancelado:    { bg: 'bg-gray-100',   text: 'text-gray-600',   label: 'Cancelado' },
-    castigado:    { bg: 'bg-red-100',    text: 'text-red-800',    label: 'Castigado' },
-    refinanciado: { bg: 'bg-amber-100',  text: 'text-amber-800',  label: 'Refinanciado' },
+  const map: Record<string, { variant: 'success' | 'warning' | 'danger' | 'neutral'; label: string }> = {
+    vigente:      { variant: 'success',  label: 'Vigente' },
+    cancelado:    { variant: 'neutral',  label: 'Cancelado' },
+    castigado:    { variant: 'danger',   label: 'Castigado' },
+    refinanciado: { variant: 'warning',  label: 'Refinanciado' },
   }
   const s = map[estado] ?? map.cancelado
-  return (
-    <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${s.bg} ${s.text}`}>
-      {s.label}
-    </span>
-  )
+  return <StatusBadge label={s.label} variant={s.variant} />
 }
 
 function CuotaBadge({ estado }: { estado: string }) {
@@ -89,14 +88,6 @@ function formatDate(d: string | null | undefined) {
   return `${parts[2]}/${parts[1]}/${parts[0]}`
 }
 
-function DataField({ label, value }: { label: string; value: string | null | undefined }) {
-  return (
-    <div>
-      <p className="text-xs text-gray-400 uppercase tracking-wide mb-0.5">{label}</p>
-      <p className="text-sm font-medium text-gray-800">{value ?? '—'}</p>
-    </div>
-  )
-}
 
 // ── Componente ────────────────────────────────────────────────────────────────
 
@@ -105,6 +96,7 @@ export default function CreditoDetailPage() {
   const [credito, setCredito] = useState<Credito | null>(null)
   const [cuotas, setCuotas] = useState<Cuota[]>([])
   const [loading, setLoading] = useState(true)
+  const [refreshKey, setRefreshKey] = useState(0)
 
   useEffect(() => {
     const supabase = createClient()
@@ -124,17 +116,15 @@ export default function CreditoDetailPage() {
       if (cc) setCuotas(cc as Cuota[])
       setLoading(false)
     })
-  }, [id])
+  }, [id, refreshKey])
 
-  if (loading) return <div className="p-8 text-sm text-gray-400">Cargando...</div>
+  if (loading) return <div className="min-h-full bg-slate-50 p-8 text-sm text-slate-400">Cargando...</div>
   if (!credito) {
     return (
-      <div className="p-8">
-        <p className="text-sm text-gray-500">Crédito no encontrado.</p>
-        <Link href="/dashboard/creditos" className="text-sm text-[#1e3a5f] underline mt-2 inline-block">
-          Volver a Créditos
-        </Link>
-      </div>
+      <PageFrame>
+        <p className="text-sm text-slate-500">Crédito no encontrado.</p>
+        <Link href="/dashboard/creditos" className={`${btnGhost} mt-2 inline-flex`}>Volver a Créditos</Link>
+      </PageFrame>
     )
   }
 
@@ -144,138 +134,123 @@ export default function CreditoDetailPage() {
   const cuotasVencidas = cuotas.filter(c => c.estado === 'vencida').length
 
   return (
-    <div className="p-8">
-      {/* Header */}
-      <div className="flex items-start justify-between mb-6">
-        <div>
-          <Link href="/dashboard/creditos" className="text-sm text-gray-400 hover:text-gray-600 mb-1 inline-block transition-colors">
-            ← Volver a Créditos
-          </Link>
-          <h1 className="text-2xl font-bold text-gray-800">Pagaré Nº {credito.nro_pagare}</h1>
-          <div className="flex items-center gap-3 mt-1.5">
-            <span className="text-sm text-gray-600">
-              {credito.socios ? `${credito.socios.apellidos}, ${credito.socios.nombres}` : '—'}
-            </span>
-            <CreditoBadge estado={credito.estado} />
-          </div>
-        </div>
-        <Link
-          href={`/dashboard/creditos/${id}/editar`}
-          className="px-4 py-2 rounded-lg text-white text-sm font-medium hover:opacity-90 transition-opacity"
-          style={{ backgroundColor: '#1e3a5f' }}
-        >
-          Editar
-        </Link>
-      </div>
+    <PageFrame>
+      <Link href="/dashboard/creditos" className={`${btnGhost} mb-4 inline-flex`}>← Volver a Créditos</Link>
+
+      <DetailHero
+        title={`Pagaré Nº ${credito.nro_pagare}`}
+        subtitle={credito.socios ? formatNombrePersona(credito.socios.apellidos, credito.socios.nombres) : '—'}
+        badge={<CreditoBadge estado={credito.estado} />}
+        actions={
+          <Link href={`/dashboard/creditos/${id}/editar`} className={btnEdit}>Editar</Link>
+        }
+      />
 
       {/* Tarjetas resumen */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
         {[
           { label: 'Monto Aprobado', value: `S/ ${fmt(credito.monto_aprobado)}` },
-          { label: 'Saldo Capital', value: `S/ ${fmt(credito.saldo_capital)}` },
-          { label: 'Cuota Mensual', value: `S/ ${fmt(credito.cuota_mensual)}` },
-          { label: 'Total Pagado', value: `S/ ${fmt(totalPagado)}` },
+          { label: 'Saldo Capital',  value: `S/ ${fmt(credito.saldo_capital)}` },
+          { label: 'Cuota Mensual',  value: `S/ ${fmt(credito.cuota_mensual)}` },
+          { label: 'Total Pagado',   value: `S/ ${fmt(totalPagado)}` },
         ].map(card => (
-          <div key={card.label} className="bg-white rounded-xl border border-gray-200 p-4">
-            <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">{card.label}</p>
-            <p className="text-lg font-bold text-gray-800">{card.value}</p>
+          <div key={card.label} className="bg-white rounded-xl border border-slate-200 p-4">
+            <p className="text-xs text-slate-400 uppercase tracking-wide mb-1">{card.label}</p>
+            <p className="text-lg font-bold text-slate-800 tabular-nums">{card.value}</p>
           </div>
         ))}
       </div>
 
-      <div className="space-y-5">
-        {/* Datos del socio */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
-          <h2 className="text-xs font-semibold text-[#1e3a5f] uppercase tracking-wider mb-4 pb-2 border-b border-gray-100">
-            Datos del Socio
-          </h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
-            <DataField label="Nº Socio" value={credito.socios?.nro_socio} />
-            <DataField label="DNI" value={credito.socios?.dni} />
-            <DataField label="Apellidos" value={credito.socios?.apellidos} />
-            <DataField label="Nombres" value={credito.socios?.nombres} />
+      <DetailSection title="Datos del Socio">
+        <FieldGrid cols={4}>
+          <FieldItem label="Nº Socio" value={credito.socios?.nro_socio} accent />
+          <FieldItem label="DNI" value={credito.socios?.dni} mono />
+          <FieldItem label="Apellidos" value={credito.socios?.apellidos} />
+          <FieldItem label="Nombres" value={credito.socios?.nombres} />
+        </FieldGrid>
+      </DetailSection>
+
+      <DetailSection title="Datos del Crédito">
+        <FieldGrid cols={4}>
+          <FieldItem label="Tipo de Crédito" value={credito.tipo_credito} />
+          <FieldItem label="Fecha Desembolso" value={formatDate(credito.fecha_desembolso)} />
+          <FieldItem label="Tasa TEA" value={credito.tasa_interes != null ? `${credito.tasa_interes}%` : undefined} mono />
+          <FieldItem label="Plazo" value={credito.plazo_meses ? `${credito.plazo_meses} meses` : undefined} />
+          <FieldItem label="Monto Aprobado" value={`S/ ${fmt(credito.monto_aprobado)}`} mono />
+          <FieldItem label="Monto Girado Neto" value={`S/ ${fmt(credito.monto_girado_neto)}`} mono />
+          <FieldItem label="Cuota Mensual" value={`S/ ${fmt(credito.cuota_mensual)}`} mono />
+          <FieldItem label="Saldo Capital" value={`S/ ${fmt(credito.saldo_capital)}`} mono accent />
+          <FieldItem label="Fecha Cancelación" value={formatDate(credito.fecha_cancelacion)} />
+        </FieldGrid>
+      </DetailSection>
+
+      <DetailSection title="Descuentos al Desembolso">
+        <FieldGrid cols={3}>
+          <FieldItem label="FPS" value={`S/ ${fmt(credito.descuento_fps)}`} mono />
+          <FieldItem label="Seguro" value={`S/ ${fmt(credito.descuento_seguro)}`} mono />
+          <FieldItem label="Otros" value={`S/ ${fmt(credito.descuento_otros)}`} mono />
+        </FieldGrid>
+      </DetailSection>
+
+      {/* Historial de Ampliaciones — no tocar lógica */}
+      <AmpliacionesSection
+        creditoId={id}
+        nroPagareActual={credito.nro_pagare}
+        montoAprobado={credito.monto_aprobado}
+        saldoCapital={credito.saldo_capital}
+        plazoMeses={credito.plazo_meses}
+        tasaInteres={credito.tasa_interes}
+        cuotaMensual={credito.cuota_mensual}
+        onCreditoUpdated={() => setRefreshKey(k => k + 1)}
+      />
+
+      {/* Cronograma de cuotas */}
+      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden mb-4">
+        <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+          <h2 className="text-sm font-semibold text-slate-700">Cronograma de Cuotas</h2>
+          <div className="flex gap-3 text-xs text-slate-500">
+            <span>Pagadas: <span className="font-semibold text-green-700">{cuotasPagadas}</span></span>
+            <span>Vencidas: <span className="font-semibold text-red-700">{cuotasVencidas}</span></span>
+            <span>Total: <span className="font-semibold text-slate-700">{cuotas.length}</span></span>
           </div>
         </div>
-
-        {/* Datos del crédito */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
-          <h2 className="text-xs font-semibold text-[#1e3a5f] uppercase tracking-wider mb-4 pb-2 border-b border-gray-100">
-            Datos del Crédito
-          </h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-            <DataField label="Tipo de Crédito" value={credito.tipo_credito} />
-            <DataField label="Fecha Desembolso" value={formatDate(credito.fecha_desembolso)} />
-            <DataField label="Tasa Interés Anual" value={credito.tasa_interes != null ? `${credito.tasa_interes}%` : undefined} />
-            <DataField label="Plazo" value={credito.plazo_meses ? `${credito.plazo_meses} meses` : undefined} />
-            <DataField label="Monto Aprobado" value={`S/ ${fmt(credito.monto_aprobado)}`} />
-            <DataField label="Monto Girado Neto" value={`S/ ${fmt(credito.monto_girado_neto)}`} />
-            <DataField label="Cuota Mensual" value={`S/ ${fmt(credito.cuota_mensual)}`} />
-            <DataField label="Saldo Capital" value={`S/ ${fmt(credito.saldo_capital)}`} />
-            <DataField label="Fecha Cancelación" value={formatDate(credito.fecha_cancelacion)} />
-          </div>
-        </div>
-
-        {/* Descuentos */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
-          <h2 className="text-xs font-semibold text-[#1e3a5f] uppercase tracking-wider mb-4 pb-2 border-b border-gray-100">
-            Descuentos al Desembolso
-          </h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-5">
-            <DataField label="FPS" value={`S/ ${fmt(credito.descuento_fps)}`} />
-            <DataField label="Seguro" value={`S/ ${fmt(credito.descuento_seguro)}`} />
-            <DataField label="Otros" value={`S/ ${fmt(credito.descuento_otros)}`} />
-          </div>
-        </div>
-
-        {/* Cronograma de cuotas */}
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-            <h2 className="text-xs font-semibold text-[#1e3a5f] uppercase tracking-wider">
-              Cronograma de Cuotas
-            </h2>
-            <div className="flex gap-3 text-xs text-gray-500">
-              <span>Pagadas: <span className="font-semibold text-green-700">{cuotasPagadas}</span></span>
-              <span>Vencidas: <span className="font-semibold text-red-700">{cuotasVencidas}</span></span>
-              <span>Total: <span className="font-semibold text-gray-700">{cuotas.length}</span></span>
-            </div>
-          </div>
-
-          {cuotas.length === 0 ? (
-            <div className="p-8 text-center text-gray-400 text-sm">Sin cronograma generado</div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="bg-gray-50 border-b border-gray-200">
-                    {['Nº', 'Vencimiento', 'Capital', 'Interés', 'Cuota Total', 'Cap. Pagado', 'Int. Pagado', 'Estado'].map(h => (
-                      <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap">
-                        {h}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100">
-                  {cuotas.map(c => (
-                    <tr
-                      key={c.id}
-                      className={`transition-colors ${c.estado === 'vencida' ? 'bg-red-50/40' : c.estado === 'pagada' ? 'bg-green-50/30' : 'hover:bg-gray-50'}`}
-                    >
-                      <td className="px-4 py-2.5 text-sm font-medium text-gray-700">{c.nro_cuota}</td>
-                      <td className="px-4 py-2.5 text-sm text-gray-600 whitespace-nowrap">{formatDate(c.fecha_vencimiento)}</td>
-                      <td className="px-4 py-2.5 text-sm text-gray-700 whitespace-nowrap">{fmt(c.capital)}</td>
-                      <td className="px-4 py-2.5 text-sm text-gray-700 whitespace-nowrap">{fmt(c.interes)}</td>
-                      <td className="px-4 py-2.5 text-sm font-semibold text-gray-900 whitespace-nowrap">{fmt(c.cuota_total)}</td>
-                      <td className="px-4 py-2.5 text-sm text-gray-700 whitespace-nowrap">{fmt(c.capital_pagado)}</td>
-                      <td className="px-4 py-2.5 text-sm text-gray-700 whitespace-nowrap">{fmt(c.interes_pagado)}</td>
-                      <td className="px-4 py-2.5"><CuotaBadge estado={c.estado} /></td>
-                    </tr>
+        {cuotas.length === 0 ? (
+          <div className="p-8 text-center text-slate-400 text-sm">Sin cronograma generado</div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead className="bg-slate-50 border-b border-slate-200">
+                <tr>
+                  {['Nº', 'Vencimiento', 'Capital', 'Interés', 'Cuota Total', 'Cap. Pagado', 'Int. Pagado', 'Estado'].map(h => (
+                    <th key={h} className="px-4 py-3 text-left text-xs font-medium text-slate-500 whitespace-nowrap">
+                      {h}
+                    </th>
                   ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
+                </tr>
+              </thead>
+              <tbody>
+                {cuotas.map(c => (
+                  <tr
+                    key={c.id}
+                    className={`border-b border-slate-100 last:border-0 transition-colors ${
+                      c.estado === 'vencida' ? 'bg-red-50/40' : c.estado === 'pagada' ? 'bg-green-50/30' : 'hover:bg-slate-50/50'
+                    }`}
+                  >
+                    <td className="px-4 py-2.5 font-medium text-slate-700">{c.nro_cuota}</td>
+                    <td className="px-4 py-2.5 text-slate-600 whitespace-nowrap">{formatDate(c.fecha_vencimiento)}</td>
+                    <td className="px-4 py-2.5 text-slate-700 whitespace-nowrap tabular-nums">{fmt(c.capital)}</td>
+                    <td className="px-4 py-2.5 text-slate-700 whitespace-nowrap tabular-nums">{fmt(c.interes)}</td>
+                    <td className="px-4 py-2.5 font-semibold text-slate-900 whitespace-nowrap tabular-nums">{fmt(c.cuota_total)}</td>
+                    <td className="px-4 py-2.5 text-slate-700 whitespace-nowrap tabular-nums">{fmt(c.capital_pagado)}</td>
+                    <td className="px-4 py-2.5 text-slate-700 whitespace-nowrap tabular-nums">{fmt(c.interes_pagado)}</td>
+                    <td className="px-4 py-2.5"><CuotaBadge estado={c.estado} /></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
-    </div>
+    </PageFrame>
   )
 }

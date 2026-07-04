@@ -3,6 +3,8 @@
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase'
+import { formatNombrePersona } from '@/lib/formatNombre'
+import { PageFrame, PageToolbar, FilterBar, DataTableShell, DataTableHeader, DataTableEmpty, TableSkeleton, RecordMeta, InlineAlert, btnPrimary, btnGhost, inputCls, selectCls } from '../_components/ui'
 
 // ─── tipos ────────────────────────────────────────────────────────────────────
 
@@ -53,14 +55,30 @@ function getClasificacion(dias_mora: number): string {
   return 'Pérdida'
 }
 
-function getTasaProvision(clasificacion: string): number {
+type TasasProvision = {
+  normal: number
+  cpp: number
+  deficiente: number
+  dudoso: number
+  perdida: number
+}
+
+const TASAS_DEFECTO: TasasProvision = {
+  normal: 0.01,
+  cpp: 0.05,
+  deficiente: 0.25,
+  dudoso: 0.60,
+  perdida: 1.00,
+}
+
+function getTasaProvision(clasificacion: string, t: TasasProvision): number {
   switch (clasificacion) {
-    case 'Normal':      return 0.01
-    case 'CPP':         return 0.05
-    case 'Deficiente':  return 0.25
-    case 'Dudoso':      return 0.60
-    case 'Pérdida':     return 1.00
-    default:            return 0.01
+    case 'Normal':      return t.normal
+    case 'CPP':         return t.cpp
+    case 'Deficiente':  return t.deficiente
+    case 'Dudoso':      return t.dudoso
+    case 'Pérdida':     return t.perdida
+    default:            return t.normal
   }
 }
 
@@ -107,6 +125,7 @@ export default function CarteraPage() {
   const [creditos, setCreditos] = useState<CreditoCalculado[]>([])
   const [convenios, setConvenios] = useState<Convenio[]>([])
   const [loading, setLoading] = useState(true)
+  const [tasasWarning, setTasasWarning] = useState(false)
 
   // filtros locales
   const [busqueda, setBusqueda] = useState('')
@@ -117,6 +136,25 @@ export default function CarteraPage() {
   const fetchCartera = useCallback(async () => {
     setLoading(true)
     const sb = createClient()
+
+    let tasasActivas = TASAS_DEFECTO
+    const cfgRes = await sb
+      .from('configuracion')
+      .select('provision_normal,provision_cpp,provision_deficiente,provision_dudoso,provision_perdida')
+      .eq('id', 1)
+      .single()
+    if (cfgRes.data) {
+      tasasActivas = {
+        normal: cfgRes.data.provision_normal ?? TASAS_DEFECTO.normal,
+        cpp: cfgRes.data.provision_cpp ?? TASAS_DEFECTO.cpp,
+        deficiente: cfgRes.data.provision_deficiente ?? TASAS_DEFECTO.deficiente,
+        dudoso: cfgRes.data.provision_dudoso ?? TASAS_DEFECTO.dudoso,
+        perdida: cfgRes.data.provision_perdida ?? TASAS_DEFECTO.perdida,
+      }
+      setTasasWarning(false)
+    } else {
+      setTasasWarning(true)
+    }
 
     const [creditosRes, conveniosRes] = await Promise.all([
       sb
@@ -165,7 +203,7 @@ export default function CarteraPage() {
       const minFecha = minFechaPorCredito[c.id]
       const dias_mora = minFecha ? Math.max(0, diasEntre(minFecha, hoy)) : 0
       const clasificacion = getClasificacion(dias_mora)
-      const tasa_provision = getTasaProvision(clasificacion)
+      const tasa_provision = getTasaProvision(clasificacion, tasasActivas)
       const provision_requerida = (c.saldo_capital ?? 0) * tasa_provision
       const convenio_nombre = c.socios?.convenios?.nombre ?? null
       return { ...c, dias_mora, clasificacion, tasa_provision, provision_requerida, convenio_nombre }
@@ -220,152 +258,136 @@ export default function CarteraPage() {
     provision: creditos.reduce((s, c) => s + c.provision_requerida, 0),
   }), [creditos])
 
+  const hayFiltrosActivos = applied.busqueda || applied.clasif !== 'Todas' || applied.convenio !== '0'
+
+  function limpiarFiltros() {
+    setBusqueda('')
+    setFiltroClasif('Todas')
+    setFiltroConvenio('0')
+    setApplied({ busqueda: '', clasif: 'Todas', convenio: '0' })
+  }
+
   return (
-    <div className="p-8">
-      {/* Encabezado */}
-      <div className="mb-6">
-        <div className="flex items-center gap-3">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-800">Cartera de Créditos</h1>
-            <p className="text-sm text-gray-500 mt-0.5">Clasificación y provisiones del mes</p>
-          </div>
-          <span className="ml-auto px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+    <PageFrame>
+      <PageToolbar
+        title="Cartera de Créditos"
+        subtitle="Clasificación y provisiones del mes"
+        meta={
+          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">
             Al {fechaHoy()}
           </span>
-        </div>
-      </div>
+        }
+      />
+
+      {tasasWarning && !loading && (
+        <InlineAlert variant="warning">
+          Usando tasas de provisión SBS por defecto. Verifique los parámetros financieros en{' '}
+          <Link href="/dashboard/configuracion" className="underline font-medium">Configuración</Link>.
+        </InlineAlert>
+      )}
 
       {/* Tarjetas resumen por clasificación */}
       {!loading && (
-        <div className="grid grid-cols-2 lg:grid-cols-6 gap-3 mb-6">
+        <div className="grid grid-cols-2 lg:grid-cols-6 gap-3 mb-5">
           {resumenClasif.map(r => {
             const col = COLORES[r.clasificacion]
             return (
               <div key={r.clasificacion} className={`bg-white rounded-xl border p-4 ${col.border}`}>
-                <div className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold mb-2 ${col.bg} ${col.text}`}>
+                <div className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold mb-2 ${col.bg} ${col.text}`}>
                   {r.clasificacion}
                 </div>
-                <p className="text-xl font-bold text-gray-800">{r.n}</p>
-                <p className="text-xs text-gray-500 mt-0.5">S/ {fmt(r.saldo)}</p>
-                <p className="text-xs text-gray-400 mt-0.5">Prov: S/ {fmt(r.provision)}</p>
+                <p className="text-xl font-bold text-slate-800">{r.n}</p>
+                <p className="text-xs text-slate-500 mt-0.5 tabular-nums">S/ {fmt(r.saldo)}</p>
+                <p className="text-xs text-slate-400 mt-0.5 tabular-nums">Prov: S/ {fmt(r.provision)}</p>
               </div>
             )
           })}
-          {/* Tarjeta totales */}
-          <div className="bg-white rounded-xl border border-gray-200 p-4" style={{ borderColor: '#1e3a5f' }}>
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">TOTAL</p>
-            <p className="text-xl font-bold" style={{ color: '#1e3a5f' }}>{totales.n}</p>
-            <p className="text-xs text-gray-500 mt-0.5">S/ {fmt(totales.saldo)}</p>
-            <p className="text-xs text-gray-400 mt-0.5">Prov: S/ {fmt(totales.provision)}</p>
+          <div className="bg-white rounded-xl border border-slate-200 p-4" style={{ borderColor: '#1E3A5F' }}>
+            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">TOTAL</p>
+            <p className="text-xl font-bold text-[#1E3A5F]">{totales.n}</p>
+            <p className="text-xs text-slate-500 mt-0.5 tabular-nums">S/ {fmt(totales.saldo)}</p>
+            <p className="text-xs text-slate-400 mt-0.5 tabular-nums">Prov: S/ {fmt(totales.provision)}</p>
           </div>
         </div>
       )}
 
-      {/* Filtros */}
-      <div className="flex flex-wrap gap-3 mb-5">
+      <FilterBar>
         <input
           value={busqueda}
           onChange={e => setBusqueda(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && handleFiltrar()}
           placeholder="Buscar por nombre o DNI..."
-          className="px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent w-60"
+          className={`${inputCls} w-60`}
         />
-        <select
-          value={filtroClasif}
-          onChange={e => setFiltroClasif(e.target.value)}
-          className="px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
-        >
+        <select value={filtroClasif} onChange={e => setFiltroClasif(e.target.value)} className={selectCls}>
           <option value="Todas">Todas las clasificaciones</option>
           {CLASIFICACIONES.map(c => <option key={c} value={c}>{c}</option>)}
         </select>
-        <select
-          value={filtroConvenio}
-          onChange={e => setFiltroConvenio(e.target.value)}
-          className="px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
-        >
+        <select value={filtroConvenio} onChange={e => setFiltroConvenio(e.target.value)} className={selectCls}>
           <option value="0">Todos los convenios</option>
           {convenios.map(cv => <option key={cv.id} value={String(cv.id)}>{cv.nombre}</option>)}
         </select>
-        <button
-          onClick={handleFiltrar}
-          className="px-4 py-2 rounded-lg text-white text-sm font-medium hover:opacity-90 transition-opacity"
-          style={{ backgroundColor: '#1e3a5f' }}
-        >
-          Filtrar
-        </button>
-      </div>
+        <button onClick={handleFiltrar} className={btnPrimary}>Filtrar</button>
+        {hayFiltrosActivos && (
+          <button onClick={limpiarFiltros} className={btnGhost}>Limpiar filtros</button>
+        )}
+      </FilterBar>
 
-      {/* Tabla */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        {loading ? (
-          <div className="p-12 text-center text-gray-400 text-sm">Cargando cartera...</div>
-        ) : filtrados.length === 0 ? (
-          <div className="p-12 text-center text-gray-400 text-sm">No se encontraron créditos</div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-gray-200 bg-gray-50">
-                  {['Socio', 'DNI', 'Pagaré', 'Desembolso', 'Saldo Capital', 'Cuota', 'Días Mora', 'Clasificación', 'Provisión', 'Acciones'].map(h => (
-                    <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap">
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                {filtrados.map(c => (
-                  <tr key={c.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-4 py-3 text-sm font-medium text-gray-900 whitespace-nowrap">
-                      {c.socios ? `${c.socios.apellidos}, ${c.socios.nombres}` : '—'}
+      <DataTableShell>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <DataTableHeader>
+              <tr>
+                {['Socio', 'DNI', 'Pagaré', 'Desembolso', 'Saldo Capital', 'Cuota', 'Días Mora', 'Clasificación', 'Provisión', 'Acciones'].map(h => (
+                  <th key={h} className="px-4 py-3 text-left text-xs font-medium text-slate-500 whitespace-nowrap">
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </DataTableHeader>
+            <tbody>
+              {loading ? (
+                <TableSkeleton rows={6} cols={10} />
+              ) : filtrados.length === 0 ? (
+                <DataTableEmpty
+                  cols={10}
+                  message={hayFiltrosActivos ? 'Sin créditos que coincidan con los filtros aplicados.' : 'No hay créditos vigentes en cartera.'}
+                  suggestion={hayFiltrosActivos ? 'Limpie los filtros para ver todos los créditos.' : undefined}
+                />
+              ) : (
+                filtrados.map(c => (
+                  <tr key={c.id} className="border-b border-slate-100 last:border-0 hover:bg-slate-50/50 transition-colors">
+                    <td className="px-4 py-3 font-medium text-slate-900 whitespace-nowrap">
+                      {c.socios ? formatNombrePersona(c.socios.apellidos, c.socios.nombres) : '—'}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-600 whitespace-nowrap">
-                      {c.socios?.dni ?? '—'}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-600 whitespace-nowrap font-mono">
-                      {c.nro_pagare}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-600 whitespace-nowrap">
-                      {formatDate(c.fecha_desembolso)}
-                    </td>
-                    <td className="px-4 py-3 text-sm font-semibold text-gray-900 whitespace-nowrap">
-                      S/ {fmt(c.saldo_capital)}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-700 whitespace-nowrap">
-                      S/ {fmt(c.cuota_mensual)}
-                    </td>
-                    <td className="px-4 py-3 text-sm whitespace-nowrap">
-                      <span className={c.dias_mora > 0 ? 'font-semibold text-red-600' : 'text-gray-600'}>
+                    <td className="px-4 py-3 text-slate-600 whitespace-nowrap">{c.socios?.dni ?? '—'}</td>
+                    <td className="px-4 py-3 text-slate-600 whitespace-nowrap font-mono">{c.nro_pagare}</td>
+                    <td className="px-4 py-3 text-slate-600 whitespace-nowrap">{formatDate(c.fecha_desembolso)}</td>
+                    <td className="px-4 py-3 font-semibold text-slate-900 whitespace-nowrap tabular-nums">S/ {fmt(c.saldo_capital)}</td>
+                    <td className="px-4 py-3 text-slate-700 whitespace-nowrap tabular-nums">S/ {fmt(c.cuota_mensual)}</td>
+                    <td className="px-4 py-3 whitespace-nowrap">
+                      <span className={c.dias_mora > 0 ? 'font-semibold text-red-600 tabular-nums' : 'text-slate-600'}>
                         {c.dias_mora}
                       </span>
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap">
                       <ClasifBadge c={c.clasificacion} />
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-700 whitespace-nowrap">
-                      S/ {fmt(c.provision_requerida)}
-                    </td>
+                    <td className="px-4 py-3 text-slate-700 whitespace-nowrap tabular-nums">S/ {fmt(c.provision_requerida)}</td>
                     <td className="px-4 py-3">
-                      <Link
-                        href={`/dashboard/cartera/${c.id}`}
-                        className="px-3 py-1 text-xs font-medium rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors"
-                      >
-                        Ver
-                      </Link>
+                      <Link href={`/dashboard/cartera/${c.id}`} className={btnGhost}>Ver</Link>
                     </td>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </DataTableShell>
 
       {!loading && filtrados.length > 0 && (
-        <p className="text-xs text-gray-400 mt-3">
-          {filtrados.length} {filtrados.length === 1 ? 'crédito' : 'créditos'}
-        </p>
+        <RecordMeta>{filtrados.length} {filtrados.length === 1 ? 'crédito' : 'créditos'}</RecordMeta>
       )}
-    </div>
+    </PageFrame>
   )
 }

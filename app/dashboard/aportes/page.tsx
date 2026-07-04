@@ -3,6 +3,10 @@
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase'
+import { useRol } from '@/lib/useRol'
+import { PiggyBank } from 'lucide-react'
+import { formatNombrePersona } from '@/lib/formatNombre'
+import { PageFrame, PageToolbar, FilterBar, DataTableShell, DataTableHeader, DataTableEmpty, TableSkeleton, RecordMeta, btnPrimary, btnGhost, inputCls, selectCls } from '../_components/ui'
 
 type Aporte = {
   id: number
@@ -47,6 +51,7 @@ const MONTHS = [
 
 export default function AportesPage() {
   const { year: currentYear, month: currentMonth } = nowYM()
+  const { rol } = useRol()
 
   const [aportes, setAportes] = useState<Aporte[]>([])
   const [loading, setLoading] = useState(true)
@@ -54,6 +59,8 @@ export default function AportesPage() {
   const [mesFilter, setMesFilter] = useState(currentMonth)
   const [anioFilter, setAnioFilter] = useState(currentYear)
   const [applied, setApplied] = useState({ mes: currentMonth, anio: currentYear, texto: '' })
+  const [sumaAnio, setSumaAnio] = useState<number | null>(null)
+  const [sociosMes, setSociosMes] = useState<number | null>(null)
 
   const yearOptions = useMemo(() => buildYearOptions(), [])
 
@@ -64,7 +71,7 @@ export default function AportesPage() {
     const lastDay = new Date(applied.anio, applied.mes, 0).getDate()
     const dateTo = `${applied.anio}-${mesStr}-${String(lastDay).padStart(2, '0')}`
 
-    let query = createClient()
+    const query = createClient()
       .from('aportes')
       .select('id, fecha, monto, saldo_nuevo, id_recibo, socios(nombres, apellidos, dni), pagos_recibos(nro_recibo)')
       .gte('fecha', dateFrom)
@@ -93,12 +100,7 @@ export default function AportesPage() {
     })
   }, [aportes, applied.texto])
 
-  // Tarjetas resumen
   const totalMes = useMemo(() => aportes.reduce((s, a) => s + (a.monto ?? 0), 0), [aportes])
-
-  const totalAnio = useMemo(async () => 0, []) // se calcula abajo
-  const [sumaAnio, setSumaAnio] = useState<number | null>(null)
-  const [sociosMes, setSociosMes] = useState<number | null>(null)
 
   useEffect(() => {
     const mesStr = String(applied.mes).padStart(2, '0')
@@ -106,7 +108,6 @@ export default function AportesPage() {
     const lastDay = new Date(applied.anio, applied.mes, 0).getDate()
     const dateTo = `${applied.anio}-${mesStr}-${String(lastDay).padStart(2, '0')}`
 
-    // socios distintos del mes
     createClient()
       .from('aportes')
       .select('id_socio')
@@ -119,7 +120,6 @@ export default function AportesPage() {
         }
       })
 
-    // total del año
     createClient()
       .from('aportes')
       .select('monto')
@@ -131,55 +131,54 @@ export default function AportesPage() {
   }, [applied.anio, applied.mes])
 
   return (
-    <div className="p-8">
-      {/* Encabezado */}
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Aportes</h1>
-        <Link
-          href="/dashboard/aportes/nuevo"
-          className="px-4 py-2 rounded-lg text-white text-sm font-medium hover:opacity-90 transition-opacity"
-          style={{ backgroundColor: '#1e3a5f' }}
-        >
-          + Nuevo Aporte
-        </Link>
-      </div>
+    <PageFrame>
+      <PageToolbar
+        title="Aportes"
+        subtitle={`${MONTHS[applied.mes - 1]} ${applied.anio}`}
+        actions={
+          ['admin', 'tesoreria'].includes(rol ?? '') ? (
+            <Link href="/dashboard/pagos/nuevo" className={btnPrimary}>
+              + Registrar aporte vía pago
+            </Link>
+          ) : undefined
+        }
+      />
 
       {/* Tarjetas resumen */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
-          <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">Total aportes del mes</p>
-          <p className="text-2xl font-bold" style={{ color: '#1e3a5f' }}>S/ {fmt(totalMes)}</p>
-          <p className="text-xs text-gray-400 mt-1">{MONTHS[applied.mes - 1]} {applied.anio}</p>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5">
+        <div className="bg-white rounded-xl border border-slate-200 p-5">
+          <p className="text-xs text-slate-400 uppercase tracking-wide mb-1">Total aportes del mes</p>
+          <p className="text-2xl font-bold text-[#1E3A5F] tabular-nums">S/ {fmt(totalMes)}</p>
+          <p className="text-xs text-slate-400 mt-1">{MONTHS[applied.mes - 1]} {applied.anio}</p>
         </div>
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
-          <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">Total aportes del año</p>
-          <p className="text-2xl font-bold" style={{ color: '#1e3a5f' }}>
+        <div className="bg-white rounded-xl border border-slate-200 p-5">
+          <p className="text-xs text-slate-400 uppercase tracking-wide mb-1">Total aportes del año</p>
+          <p className="text-2xl font-bold text-[#1E3A5F] tabular-nums">
             {sumaAnio === null ? '...' : `S/ ${fmt(sumaAnio)}`}
           </p>
-          <p className="text-xs text-gray-400 mt-1">Año {applied.anio}</p>
+          <p className="text-xs text-slate-400 mt-1">Año {applied.anio}</p>
         </div>
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
-          <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">Socios con aportes este mes</p>
-          <p className="text-2xl font-bold" style={{ color: '#1e3a5f' }}>
+        <div className="bg-white rounded-xl border border-slate-200 p-5">
+          <p className="text-xs text-slate-400 uppercase tracking-wide mb-1">Socios con aportes este mes</p>
+          <p className="text-2xl font-bold text-[#1E3A5F]">
             {sociosMes === null ? '...' : sociosMes}
           </p>
-          <p className="text-xs text-gray-400 mt-1">{MONTHS[applied.mes - 1]} {applied.anio}</p>
+          <p className="text-xs text-slate-400 mt-1">{MONTHS[applied.mes - 1]} {applied.anio}</p>
         </div>
       </div>
 
-      {/* Filtros */}
-      <div className="flex flex-wrap gap-3 mb-5">
+      <FilterBar>
         <input
           value={busqueda}
           onChange={e => setBusqueda(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && handleBuscar()}
           placeholder="Buscar por nombre o DNI..."
-          className="px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent w-64"
+          className={`${inputCls} w-64`}
         />
         <select
           value={mesFilter}
           onChange={e => setMesFilter(Number(e.target.value))}
-          className="px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
+          className={selectCls}
         >
           {MONTHS.map((m, i) => (
             <option key={i + 1} value={i + 1}>{m}</option>
@@ -188,81 +187,79 @@ export default function AportesPage() {
         <select
           value={anioFilter}
           onChange={e => setAnioFilter(Number(e.target.value))}
-          className="px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
+          className={selectCls}
         >
           {yearOptions.map(y => (
             <option key={y} value={y}>{y}</option>
           ))}
         </select>
-        <button
-          onClick={handleBuscar}
-          className="px-4 py-2 rounded-lg text-white text-sm font-medium hover:opacity-90 transition-opacity"
-          style={{ backgroundColor: '#1e3a5f' }}
-        >
+        <button onClick={handleBuscar} className={btnPrimary}>
           Buscar
         </button>
-      </div>
+      </FilterBar>
 
-      {/* Tabla */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        {loading ? (
-          <div className="p-12 text-center text-gray-400 text-sm">Cargando aportes...</div>
-        ) : filtered.length === 0 ? (
-          <div className="p-12 text-center text-gray-400 text-sm">No se encontraron aportes</div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-gray-200 bg-gray-50">
-                  {['Socio', 'DNI', 'Fecha', 'Monto', 'Saldo Acumulado', 'Recibo', 'Acciones'].map(h => (
-                    <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap">
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                {filtered.map(a => (
-                  <tr key={a.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-4 py-3 text-sm font-medium text-gray-900">
-                      {a.socios ? `${a.socios.apellidos}, ${a.socios.nombres}` : '—'}
+      <DataTableShell>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <DataTableHeader>
+              <tr>
+                {['Socio', 'DNI', 'Fecha', 'Monto', 'Saldo Acumulado', 'Recibo', 'Acciones'].map(h => (
+                  <th key={h} className="px-4 py-3 text-left text-xs font-medium text-slate-500 whitespace-nowrap">
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </DataTableHeader>
+            <tbody>
+              {loading ? (
+                <TableSkeleton rows={6} cols={7} />
+              ) : filtered.length === 0 ? (
+                <DataTableEmpty
+                  cols={7}
+                  message={
+                    applied.texto
+                      ? `Sin coincidencias para "${applied.texto}" en ${MONTHS[applied.mes - 1]} ${applied.anio}.`
+                      : `Sin aportes en ${MONTHS[applied.mes - 1]} ${applied.anio}.`
+                  }
+                  suggestion={applied.texto ? 'Pruebe cambiar el término o seleccionar otro período.' : undefined}
+                />
+              ) : (
+                filtered.map(a => (
+                  <tr key={a.id} className="border-b border-slate-100 last:border-0 hover:bg-slate-50/50 transition-colors">
+                    <td className="px-4 py-3 font-medium text-slate-900">
+                      {a.socios ? formatNombrePersona(a.socios.apellidos, a.socios.nombres) : '—'}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-600 whitespace-nowrap">
+                    <td className="px-4 py-3 text-slate-600 whitespace-nowrap">
                       {a.socios?.dni ?? '—'}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-600 whitespace-nowrap">
+                    <td className="px-4 py-3 text-slate-600 whitespace-nowrap">
                       {formatDate(a.fecha)}
                     </td>
-                    <td className="px-4 py-3 text-sm font-semibold text-gray-900 whitespace-nowrap">
+                    <td className="px-4 py-3 font-semibold text-slate-900 whitespace-nowrap tabular-nums">
                       S/ {fmt(a.monto)}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-700 whitespace-nowrap">
+                    <td className="px-4 py-3 text-slate-700 whitespace-nowrap tabular-nums">
                       S/ {fmt(a.saldo_nuevo)}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-600 whitespace-nowrap">
+                    <td className="px-4 py-3 text-slate-600 whitespace-nowrap">
                       {a.pagos_recibos?.nro_recibo ?? '—'}
                     </td>
                     <td className="px-4 py-3">
-                      <Link
-                        href={`/dashboard/aportes/${a.id}`}
-                        className="px-3 py-1 text-xs font-medium rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors"
-                      >
+                      <Link href={`/dashboard/aportes/${a.id}`} className={btnGhost}>
                         Ver
                       </Link>
                     </td>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </DataTableShell>
 
       {!loading && filtered.length > 0 && (
-        <p className="text-xs text-gray-400 mt-3">
-          {filtered.length} {filtered.length === 1 ? 'aporte' : 'aportes'}
-        </p>
+        <RecordMeta>{filtered.length} {filtered.length === 1 ? 'aporte' : 'aportes'}</RecordMeta>
       )}
-    </div>
+    </PageFrame>
   )
 }

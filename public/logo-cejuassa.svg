@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 220" width="220" height="220">
+  <!-- Fondo blanco -->
+  <circle cx="110" cy="110" r="108" fill="white"/>
+  <!-- Anillo azul exterior -->
+  <circle cx="110" cy="110" r="104" fill="none" stroke="#1756b8" stroke-width="11"/>
+
+  <!-- Cabeza del personaje -->
+  <circle cx="110" cy="58" r="23" fill="#1756b8"/>
+
+  <!-- Cuerpo / brazos del personaje (forma que se abre hacia abajo y afuera) -->
+  <path d="
+    M 110,80
+    C 110,84  100,89  90,95
+    C 74,105  52,118  36,136
+    C 26,148  24,158  30,166
+    C 36,174  52,173  66,163
+    C 78,154  90,144  98,135
+    C 102,131 106,127 110,124
+    C 114,127 118,131 122,135
+    C 130,144 142,154 154,163
+    C 168,173 184,174 190,166
+    C 196,158 194,148 184,136
+    C 168,118 146,105 130,95
+    C 120,89 110,84 110,80 Z
+  " fill="#1756b8"/>
+
+  <!-- Árbol izquierdo (verde) — 3 pisos + tronco -->
+  <polygon points="97,76  82,105  112,105" fill="#2a8a3a"/>
+  <polygon points="93,98  76,130  110,130" fill="#2a8a3a"/>
+  <polygon points="90,118  70,152  110,152" fill="#2a8a3a"/>
+  <rect x="82" y="152" width="9" height="13" fill="#2a8a3a"/>
+
+  <!-- Árbol derecho (verde) — 3 pisos + tronco -->
+  <polygon points="123,76  108,105  138,105" fill="#2a8a3a"/>
+  <polygon points="127,98  110,130  144,130" fill="#2a8a3a"/>
+  <polygon points="130,118  110,152  150,152" fill="#2a8a3a"/>
+  <rect x="129" y="152" width="9" height="13" fill="#2a8a3a"/>
+
+  <!-- Arco superior: COOPAC - CEJUASSA - LL -->
+  <defs>
+    <path id="arcTop" d="M 18,112 A 92,92 0 0,1 202,112"/>
+    <path id="arcBot" d="M 34,132 A 76,76 0 0,0 186,132"/>
+  </defs>
+
+  <text font-size="12" fill="#1756b8" font-weight="bold" font-family="Arial, Helvetica, sans-serif" letter-spacing="0.8">
+    <textPath href="#arcTop" startOffset="50%" text-anchor="middle">COOPAC - CEJUASSA - LL</textPath>
+  </text>
+
+  <!-- Arco inferior: TRUJILLO -->
+  <text font-size="13.5" fill="#1756b8" font-weight="bold" font-family="Arial, Helvetica, sans-serif" letter-spacing="1.5">
+    <textPath href="#arcBot" startOffset="50%" text-anchor="middle">TRUJILLO</textPath>
+  </text>
+</svg>
