@@ -1,0 +1,16 @@
+{
+  "fase": "10K-2B (acotada)",
+  "modo": "APPLY EJECUTADO",
+  "generado": "2026-07-04T16:20:43.039Z",
+  "pago_excluido": 411,
+  "pagos_procesados": 27,
+  "filas_pagos_cuotas_aplicaciones": 26,
+  "cuotas_actualizadas_ok": 26,
+  "cuotas_actualizadas_error": 0,
+  "cuotas_quedaron_pagadas": 1,
+  "cuotas_quedaron_parciales": 25,
+  "monto_total_aplicado": 6973.74,
+  "creditos_afectados": 25,
+  "creditos_sin_cronograma_omitidos": 1,
+  "errores": []
+}
